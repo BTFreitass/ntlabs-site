@@ -373,6 +373,7 @@ footer{padding:40px max(5vw,18px) 90px;border-top:1px solid var(--line)}
 </div></footer>
 </div>
 <script>window.NT_MODEL={id:'B v2',nome:'Estúdio Circuito'};</script>
+<script src="/firebase-config.js"></script>
 <script>{
 /* ===== NT Labs — site + painel de gestão (v3) ===== */
 const M = window.NT_MODEL || {id:'B v3', nome:'Estúdio Circuito'};
@@ -444,8 +445,8 @@ const PST = ['Em desenvolvimento','Em homologação','Em produção','Entregue',
 const ANDAMENTO = ['Em desenvolvimento','Em homologação'];
 const CST = ['Proposta','Em desenvolvimento','Homologação','No ar','Manutenção','Pausado','Encerrado'];
 const PROJ_PADRAO = [
-  {nome:'Sistema para imobiliária com CCA', tipo:'Sistema web', status:'Em desenvolvimento', desc:'Site de imóveis com simulação de financiamento e área do Correspondente CAIXA Aqui integrada.', tema:'imob'},
-  {nome:'Catálogo para loja de moda íntima', tipo:'Catálogo + WhatsApp', status:'Em desenvolvimento', desc:'Vitrine de produtos com tamanhos e cores; o pedido chega montado no WhatsApp da loja.', tema:'loja'},
+  {cliente:'c1', nome:'Sistema para imobiliária com CCA', tipo:'Sistema web', status:'Em desenvolvimento', desc:'Site de imóveis com simulação de financiamento e área do Correspondente CAIXA Aqui integrada.', tema:'imob'},
+  {cliente:'c2', nome:'Catálogo para loja de moda íntima', tipo:'Catálogo + WhatsApp', status:'Em desenvolvimento', desc:'Vitrine de produtos com tamanhos e cores; o pedido chega montado no WhatsApp da loja.', tema:'loja'},
   {nome:'Finance', tipo:'Aplicação web', status:'Entregue', desc:'Aplicação web de organização financeira.', gh:GH + '/Finance', tema:'fin'},
   {nome:'DEC-DOWNLOADER', tipo:'Extensão do Chrome', status:'Entregue', desc:'Automatiza o download de documentos XML no portal Agência Net DF.', gh:GH + '/DEC-DOWNLOADER', tema:'ext'},
   {nome:'FinApp2.0', tipo:'Aplicativo Java', status:'Entregue', desc:'Aplicativo de controle financeiro.', gh:GH + '/FinApp2.0', tema:'app'},
@@ -453,46 +454,116 @@ const PROJ_PADRAO = [
   {nome:'Copa-Kaleo2', tipo:'Site de campeonato', status:'Entregue', desc:'Site do campeonato Copa Kaleo.', gh:GH + '/Copa-Kaleo2', tema:'cup'},
   {nome:'TopCarros', tipo:'Site em PHP', status:'Entregue', desc:'Site de carros desenvolvido em PHP.', gh:GH + '/TopCarros', tema:'car'}
 ].map((p, i) => ({id:'p' + i, visivel:true, ordem:i + 1, site:'', gh:'', imgs:[], ...p, src:'padrao'}));
+const CLI_INICIAIS = [
+  {id:'c1', nome:'Imobiliária (CCA)', negocio:'', whats:'', sistema:'Sistema web de imobiliária com CCA integrado: o correspondente acessa direto a pasta de documentos que os corretores sobem', status:'Em desenvolvimento', obs:'Preencha nome, contato, valores e datas.', t:Date.now()},
+  {id:'c2', nome:'Meire', negocio:'Elegância Íntima', whats:'', sistema:'Catálogo + WhatsApp com estoque, ou e-commerce com Mercado Pago', status:'Proposta', obs:'Proposta com duas formas de contratação: pagamento único ou plano mensal com tudo incluso.', t:Date.now()}
+];
 
-/* ---------- dados: API do servidor (Vercel) ---------- */
-const S = {db:true, token:null, owner:false, assets:null, site:null, adm:null};
-try { S.token = localStorage.getItem('ntlabs-token'); } catch {}
-S.owner = !!S.token;
+/* ---------- dados: Firebase (Firestore + Auth com Google) ---------- */
+const FB_V = '10.12.2';
+const ADMIN_EMAIL = String(window.NT_ADMIN_EMAIL || '').toLowerCase();
+const S = {db:true, owner:false, assets:null, site:null, adm:null, user:null};
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const boot = Promise.resolve();
-const limpo = (o) => { const c = {...o}; delete c.src; return c; };
-async function api(acao, dados, raw) {
-  const r = await fetch('/api/admin?acao=' + acao, {method:'POST', headers:{'Authorization':'Bearer ' + (S.token || ''), 'Content-Type': raw ? raw.type : 'application/json'}, body: raw || JSON.stringify(dados || {})});
-  if (r.status === 401) { sair(); throw new Error('login'); }
-  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).erro || 'Erro ' + r.status);
-  return r.json();
+const limpo = (o) => { const c = {...o}; delete c.src; delete c.id; Object.keys(c).forEach(k => c[k] === undefined && delete c[k]); return c; };
+let F = null, authPronto;
+const fbReady = (async () => {
+  if (!window.NT_FIREBASE || !window.NT_FIREBASE.projectId || window.NT_FIREBASE.projectId === 'COLE_AQUI') throw new Error('Firebase não configurado');
+  const [app, fs, au] = await Promise.all([
+    import(`https://www.gstatic.com/firebasejs/${FB_V}/firebase-app.js`),
+    import(`https://www.gstatic.com/firebasejs/${FB_V}/firebase-firestore.js`),
+    import(`https://www.gstatic.com/firebasejs/${FB_V}/firebase-auth.js`)
+  ]);
+  const ap = app.initializeApp(window.NT_FIREBASE);
+  F = {...fs, ...au, db: fs.getFirestore(ap), auth: au.getAuth(ap)};
+  authPronto = new Promise(res => F.onAuthStateChanged(F.auth, u => {
+    S.user = u; S.owner = !!(u && u.email && u.email.toLowerCase() === ADMIN_EMAIL && u.emailVerified);
+    S.assets = S.owner ? uploader : null; res();
+  }));
+  await authPronto;
+  return F;
+})();
+fbReady.catch(e => console.warn('[NT Labs]', e.message));
+const boot = fbReady.catch(() => null);
+async function compactar(file, max = 1400, q = .82) {
+  const bmp = await createImageBitmap(file); const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+  const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+  cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+  return cv.toDataURL('image/webp', q);
 }
-function sair() { S.token = null; S.owner = false; S.assets = null; try { localStorage.removeItem('ntlabs-token'); } catch {} }
-async function compactar(file) {
+const uploader = {upload: async (f) => {
+  let data = await compactar(f); if (data.length > 900000) data = await compactar(f, 1000, .7);
+  if (data.length > 1000000) throw new Error('Imagem grande demais');
+  const r = await F.addDoc(F.collection(F.db, 'imgs'), {data, t:Date.now()}); return {id:r.id};
+}};
+/* imagens guardadas no Firestore: <img data-img="id"> recebe o conteúdo quando aparece */
+const IMG = {};
+async function hidratar(el) {
+  const id = el.dataset.img; if (!/^[\w-]{6,40}$/.test(id)) return;
   try {
-    const bmp = await createImageBitmap(file); const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
-    const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
-    cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
-    return await new Promise(res => cv.toBlob(b => res(b || file), 'image/webp', .85));
-  } catch { return file; }
+    if (!IMG[id]) IMG[id] = (async () => { await fbReady; const d = await F.getDoc(F.doc(F.db, 'imgs', id)); return d.exists() ? d.data().data : ''; })();
+    const src = await IMG[id]; if (src && /^data:image\//.test(src)) el.src = src;
+  } catch {}
 }
-const uploader = {upload: async (f) => api('upload', null, await compactar(f))};
-async function carregarAdmin() { S.adm = await api('dados'); S.assets = uploader; return S.adm; }
+new MutationObserver(() => $$('img[data-img]:not([data-ok])').forEach(el => { el.dataset.ok = 1; hidratar(el); })).observe(document.body, {childList:true, subtree:true});
+async function carregarAdmin() {
+  await fbReady;
+  const q = (c, ...x) => F.getDocs(F.query(F.collection(F.db, c), ...x));
+  /* primeira vez: grava os projetos e clientes iniciais */
+  const cfg = await F.getDoc(F.doc(F.db, 'site', 'config'));
+  if (!cfg.exists() || !cfg.data().iniciado) {
+    for (const p of PROJ_PADRAO) await F.setDoc(F.doc(F.db, 'projetos', p.id), limpo(p));
+    for (const c of CLI_INICIAIS) await F.setDoc(F.doc(F.db, 'clientes', c.id), limpo(c));
+    await F.setDoc(F.doc(F.db, 'site', 'config'), {iniciado:true, t:Date.now()});
+  }
+  const dias = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - 6 + i); return hoje(d); });
+  const cont = async (...x) => (await F.getCountFromServer(F.query(F.collection(F.db, 'visitas'), ...x))).data().count;
+  const [pd, cl, pj, ct, total, ...porDia] = await Promise.all([
+    q('pedidos', F.orderBy('t', 'desc'), F.limit(300)), q('clientes'), q('projetos'),
+    F.getDoc(F.doc(F.db, 'site', 'conteudo')), cont(), ...dias.map(d => cont(F.where('dia', '==', d)))
+  ]);
+  const vis = []; dias.forEach((d, i) => { for (let k = 0; k < porDia[i]; k++) vis.push({dia:d}); });
+  for (let k = vis.length; k < total; k++) vis.push({dia:'antes'});
+  const m = (s) => s.docs.map(d => ({...d.data(), id:d.id}));
+  S.adm = {pedidos:m(pd), clientes:m(cl), projetos:m(pj), visitas:vis, conteudo:ct.exists() ? ct.data() : null};
+  return S.adm;
+}
 async function listar(col) { if (!S.adm) await carregarAdmin(); return (S.adm[col] || []).map(x => ({...x, src:'db'})); }
 async function gravar(col, it) {
-  if (col === 'pedidos' && it.src === 'novo') { const r = await fetch('/api/pedido', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(limpo(it))}); if (!r.ok) throw new Error('falha'); return it; }
-  if (col === 'visitas') { fetch('/api/visita', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({cel:it.cel, origem:it.origem}), keepalive:true}).catch(() => {}); return it; }
-  const r = await api('salvar', {col, item:limpo(it.src === 'novo' ? {...it, id:undefined} : it)});
-  it.id = r.item.id; it.src = 'db'; S.adm = null; return it;
+  await fbReady;
+  if (col === 'pedidos' && it.src === 'novo') { await F.addDoc(F.collection(F.db, 'pedidos'), limpo(it)); return it; }
+  if (col === 'visitas') { F.addDoc(F.collection(F.db, 'visitas'), {dia:it.dia, cel:!!it.cel, origem:it.origem === 'link' ? 'link' : 'direto', t:Date.now()}).catch(() => {}); return it; }
+  if (col === 'pedidos') { await F.updateDoc(F.doc(F.db, 'pedidos', it.id), {status:it.status}); return it; }
+  const data = limpo(it);
+  if (it.src === 'novo' || !it.id) { const r = await F.addDoc(F.collection(F.db, col), data); it.id = r.id; }
+  else await F.setDoc(F.doc(F.db, col, it.id), data);
+  it.src = 'db'; S.adm = null; return it;
 }
-async function apagar(col, it) { await api('excluir', {col, id:it.id}); S.adm = null; }
-async function lerSite() { if (!S.site) { try { const r = await fetch('/api/site'); if (r.ok) S.site = await r.json(); } catch {} } return S.site || {}; }
+async function apagar(col, it) { await fbReady; await F.deleteDoc(F.doc(F.db, col, it.id)); S.adm = null; }
+async function lerSite() {
+  if (!S.site) {
+    try {
+      await fbReady;
+      const [c, p] = await Promise.all([F.getDoc(F.doc(F.db, 'site', 'conteudo')), F.getDocs(F.collection(F.db, 'projetos'))]);
+      S.site = {conteudo:c.exists() ? c.data() : null, projetos:p.docs.map(d => ({...d.data(), id:d.id}))};
+    } catch { S.site = {}; }
+  }
+  return S.site;
+}
 async function lerConteudo() { if (S.owner && S.adm) return S.adm.conteudo; return (await lerSite()).conteudo || null; }
-async function salvarConteudo(c) { await api('conteudo', {conteudo:c}); S.site = null; return 'db'; }
+async function salvarConteudo(c) { await fbReady; await F.setDoc(F.doc(F.db, 'site', 'conteudo'), c); S.site = null; return 'db'; }
+function sair() { if (F) F.signOut(F.auth); S.owner = false; S.assets = null; S.adm = null; }
 const juntar = (c) => ({textos:{...PADRAO.textos, ...(c?.textos || {})}, servicos:c?.servicos || PADRAO.servicos, passos:c?.passos || PADRAO.passos, difs:c?.difs || PADRAO.difs});
 async function projetosSite() {
   const l = (await lerSite()).projetos;
   return (l && l.length ? l : PROJ_PADRAO).slice().sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+}
+async function api(acao, d) { /* usado pela importação de backup */
+  await fbReady;
+  if (acao !== 'importar') throw new Error('ação');
+  if (d.conteudo) await F.setDoc(F.doc(F.db, 'site', 'conteudo'), d.conteudo);
+  for (const p of d.projetos || []) await F.setDoc(F.doc(F.db, 'projetos', p.id || uid()), limpo(p));
+  for (const c of d.clientes || []) await F.setDoc(F.doc(F.db, 'clientes', c.id || uid()), limpo(c));
+  return {ok:true};
 }
 
 /* ---------- render do site ---------- */
@@ -519,9 +590,9 @@ function corpo(p) {
 }
 function previa(p, i) {
   const T = tema(p), pal = T.pal.slice(); if (/^#[0-9a-f]{6}$/i.test(p.cor || '')) pal[2] = p.cor;
-  const imgs = (p.imgs || []).filter(x => /^[\w-]+$/.test(x));
+  const imgs = (p.imgs || []).filter(x => /^[\w-]{6,40}$/.test(x));
   const head = `<div class="bar"><i></i><i></i><i></i><em>${esc((p.nome || '').toLowerCase().replace(/\s+/g, '-'))}</em></div>`;
-  if (imgs.length) return `<div class="pj-prev shots" aria-hidden="true">${head}${imgs.map((id, k) => `<img src="/api/img?id=${id}" alt="" loading="lazy"${k === 0 ? ' class="on"' : ''}>`).join('')}${imgs.length > 1 ? `<div class="sdots">${imgs.map((_, k) => `<i${k === 0 ? ' class="on"' : ''}></i>`).join('')}</div>` : ''}</div>`;
+  if (imgs.length) return `<div class="pj-prev shots" aria-hidden="true">${head}${imgs.map((id, k) => `<img data-img="${id}" alt=""${k === 0 ? ' class="on"' : ''}>`).join('')}${imgs.length > 1 ? `<div class="sdots">${imgs.map((_, k) => `<i${k === 0 ? ' class="on"' : ''}></i>`).join('')}</div>` : ''}</div>`;
   return `<div class="pj-prev" style="--pb:${pal[0]};--pi:${pal[1]};--pa:${pal[2]};--pc:${pal[3]};--d:${-i * 1.7}s${T.pf ? ';--pf:' + T.pf : ''}" aria-hidden="true">${head}
     <div class="pg"><h4>${esc(p.tema === 'gen' || !T.h ? p.nome : T.h)}</h4>${corpo(p)}${corpo(p)}</div><span class="pj-cap">prévia ilustrativa</span></div>`;
 }
@@ -608,7 +679,7 @@ form.addEventListener('submit', async (e) => {
   if (falta.length) { err.textContent = 'Falta preencher: ' + falta.join(', ') + '.'; err.hidden = false; return; }
   err.hidden = true;
   const b = $('button[type=submit]', form); b.disabled = true; b.textContent = 'Enviando…';
-  await gravar('pedidos', {...p, src:'novo'});
+  try { await gravar('pedidos', {...p, src:'novo'}); } catch { }
   b.disabled = false; b.textContent = 'Enviar pedido de orçamento';
   $('#f-wa').href = wa(`Olá! Sou ${p.nome}, do(a) ${p.negocio}${p.segmento ? ' (' + p.segmento + ')' : ''}.\nQuero: ${p.tipo || 'um site'}${p.estilo ? ' · estilo ' + p.estilo : ''}.\n${p.recursos.length ? 'Precisa ter: ' + p.recursos.join(', ') + '.\n' : ''}${p.orcamento ? 'Investimento: ' + p.orcamento + '. ' : ''}${p.prazo ? 'Prazo: ' + p.prazo + '.' : ''}${p.msg ? '\n' + p.msg : ''}`);
   form.hidden = true; ok.hidden = false; ok.scrollIntoView({behavior:'smooth', block:'center'});
@@ -620,7 +691,7 @@ const hoje = (d = new Date()) => d.toLocaleDateString('sv-SE');
 (async () => {
   if (location.hash === '#painel') return;
   try { if (sessionStorage.getItem(LK + 'v')) return; sessionStorage.setItem(LK + 'v', '1'); } catch {}
-  if (S.owner) return; /* não conta as suas próprias visitas */
+  await boot; if (S.owner) return; /* não conta as suas próprias visitas */
   gravar('visitas', {t:Date.now(), dia:hoje(), cel:matchMedia('(max-width:700px)').matches, origem:document.referrer ? 'link' : 'direto', src:'novo'});
 })();
 
@@ -685,7 +756,7 @@ function editar(col, item, titulo) {
   $('#ed').hidden = false; $('#ed-f input, #ed-f select')?.focus();
 }
 function drawThumbs() {
-  const it = edCtx.it; $('#thumbs').innerHTML = (it.imgs || []).map((id, k) => `<figure><img src="/api/img?id=${esc(id)}" alt=""><button type="button" class="tx" data-k="${k}" aria-label="Remover imagem">×</button></figure>`).join('') || '<small class="hint">Nenhum print ainda: o site mostra a prévia animada.</small>';
+  const it = edCtx.it; $('#thumbs').innerHTML = (it.imgs || []).map((id, k) => `<figure><img data-img="${esc(id)}" alt=""><button type="button" class="tx" data-k="${k}" aria-label="Remover imagem">×</button></figure>`).join('') || '<small class="hint">Nenhum print ainda: o site mostra a prévia animada.</small>';
   $$('#thumbs .tx').forEach(b => b.onclick = () => { it.imgs.splice(+b.dataset.k, 1); drawThumbs(); });
 }
 $('#ed').addEventListener('click', async (e) => {
@@ -794,7 +865,7 @@ function projetos() {
   const lista = D.projetos.slice().sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
   const padrao = lista.length && lista.every(p => p.src === 'padrao');
   body.innerHTML = card('Projetos do site', `${padrao ? `<div class="note">Estes são os projetos de exemplo. Ao editar qualquer um, todos passam a ser seus e ficam salvos.</div>` : ''}<p class="pn-sub">Arraste a ordem com as setas. Projetos ocultos não aparecem no site.</p>
-  ${lista.map((p, k) => `<article class="prj" data-id="${esc(p.id)}"><div class="prj-th">${(p.imgs || []).length ? `<img src="/api/img?id=${esc(p.imgs[0])}" alt="">` : `<span style="--c:${esc(/^#[0-9a-f]{6}$/i.test(p.cor || '') ? p.cor : tema(p).pal[2])}"></span>`}</div>
+  ${lista.map((p, k) => `<article class="prj" data-id="${esc(p.id)}"><div class="prj-th">${(p.imgs || []).length ? `<img data-img="${esc(p.imgs[0])}" alt="">` : `<span style="--c:${esc(/^#[0-9a-f]{6}$/i.test(p.cor || '') ? p.cor : tema(p).pal[2])}"></span>`}</div>
     <div class="prj-i"><h3>${esc(p.nome)}${p.visivel === false ? ' <small>(oculto)</small>' : ''}</h3><p><span class="tag t-${esc(p.status).replace(/\s/g, '')}">${esc(p.status)}</span> ${esc(p.tipo || '')}</p></div>
     <div class="prj-a"><button class="ib" type="button" data-up aria-label="Subir"${k === 0 ? ' disabled' : ''}>↑</button><button class="ib" type="button" data-dn aria-label="Descer"${k === lista.length - 1 ? ' disabled' : ''}>↓</button><button class="btn btn-ghost btn-sm" type="button" data-ed>Editar</button></div></article>`).join('')}`,
   '<button class="btn btn-main btn-sm" type="button" id="novo">Novo projeto</button>');
@@ -853,7 +924,7 @@ function textos() {
 
 function ajustes() {
   body.innerHTML = card('Backup', `<p class="pn-sub">Copie todo o conteúdo do painel (textos, serviços, projetos e clientes) para guardar ou para publicar o site em outra hospedagem.</p><div class="ped-act"><button class="btn btn-main btn-sm" type="button" id="bk">Copiar backup (JSON)</button></div><textarea id="bk-t" rows="6" readonly hidden></textarea>`) +
-    card('Importar backup', `<p class="pn-sub">Cole um backup JSON para substituir textos, serviços, projetos e clientes.</p><textarea id="imp-t" rows="5" placeholder='{"conteudo":...}'></textarea><div class="ped-act" style="margin-top:12px"><button class="btn btn-ghost btn-sm" type="button" id="imp">Importar</button></div>`) + card('Sessão', `<p class="pn-sub">Você está conectado neste aparelho.</p><div class="ped-act"><button class="btn btn-ghost btn-sm" type="button" id="logout">Sair do painel</button></div>`);
+    card('Importar backup', `<p class="pn-sub">Cole um backup JSON para substituir textos, serviços, projetos e clientes.</p><textarea id="imp-t" rows="5" placeholder='{"conteudo":...}'></textarea><div class="ped-act" style="margin-top:12px"><button class="btn btn-ghost btn-sm" type="button" id="imp">Importar</button></div>`) + card('Sessão', `<p class="pn-sub">Conectado como ${esc(S.user?.email || "")}.</p><div class="ped-act"><button class="btn btn-ghost btn-sm" type="button" id="logout">Sair do painel</button></div>`);
   $('#logout').onclick = () => { sair(); desenhar(); };
   $('#imp').onclick = async (e) => { const b = e.target; let d; try { d = JSON.parse($('#imp-t').value); } catch { aviso('JSON inválido'); return; } if (!b.dataset.c) { b.dataset.c = 1; b.textContent = 'Confirmar: substituir tudo'; return; } try { await api('importar', d); S.adm = null; S.site = null; await recarregar(); aviso('Backup importado'); } catch (er) { aviso('Erro: ' + er.message); } };
   $('#bk').onclick = async (e) => {
@@ -864,22 +935,22 @@ function ajustes() {
 }
 
 function telaLogin() {
-  $('.pn-mode', pn).textContent = 'Entre com a sua senha para gerenciar o site.';
+  $('.pn-mode', pn).textContent = 'Entre com a sua conta Google para gerenciar o site.';
   $('#pn-tabs').innerHTML = '';
-  body.innerHTML = `<form class="pn-card login" id="lg" novalidate><h2>Entrar no painel</h2><label class="fld"><span>Senha</span><input type="password" name="senha" autocomplete="current-password"></label><p class="f-err" hidden></p><button class="btn btn-main" type="submit">Entrar</button></form>`;
-  $('#lg input').focus();
-  $('#lg').onsubmit = async (e) => {
-    e.preventDefault(); const err = $('.f-err', e.target), b = $('button', e.target); b.disabled = true; b.textContent = 'Entrando…';
+  body.innerHTML = `<div class="pn-card login"><h2>Entrar no painel</h2><p class="pn-sub">Só a conta autorizada consegue entrar.</p><p class="f-err" hidden></p><button class="btn btn-main" type="button" id="lg">Entrar com Google</button></div>`;
+  $('#lg').onclick = async (e) => {
+    const err = $('.f-err', body), b = e.target; b.disabled = true; b.textContent = 'Abrindo o Google…';
     try {
-      const r = await fetch('/api/admin?acao=login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senha:e.target.senha.value})});
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok) throw new Error(j.erro || 'Senha incorreta');
-      S.token = j.token; S.owner = true; try { localStorage.setItem('ntlabs-token', j.token); } catch {}
-      await recarregar();
-    } catch (er) { err.textContent = er.message; err.hidden = false; b.disabled = false; b.textContent = 'Entrar'; }
+      await fbReady;
+      const r = await F.signInWithPopup(F.auth, new F.GoogleAuthProvider());
+      const em = (r.user.email || '').toLowerCase();
+      if (em !== ADMIN_EMAIL) { await F.signOut(F.auth); throw new Error('A conta ' + em + ' não tem acesso ao painel.'); }
+      S.owner = true; S.assets = uploader; await recarregar();
+    } catch (er) { err.textContent = er.code === 'auth/popup-closed-by-user' ? 'Login cancelado.' : (er.message || 'Não foi possível entrar.'); err.hidden = false; b.disabled = false; b.textContent = 'Entrar com Google'; }
   };
 }
 async function recarregar() {
+  await boot;
   if (!S.owner) { desenhar(); return; }
   try { await carregarAdmin(); } catch (e) { desenhar(); if (e.message !== 'login') aviso('Não foi possível carregar: ' + e.message); return; }
   C = juntar(S.adm.conteudo);
