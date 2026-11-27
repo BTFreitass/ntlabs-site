@@ -64,11 +64,26 @@ if (!dbs.some((d) => String(d.name || '').endsWith('/(default)'))) {
   fb(`firestore:databases:create "(default)" --location ${REGIAO}`);
 } else console.log('Banco já existe.');
 
+passo('Site no Hosting');
+const SITE_PREF = 'ntlabs-dev-br';
+const conf = JSON.parse(readFileSync('firebase.json', 'utf8'));
+const sites = (fb('hosting:sites:list', { json: true, ok: true })?.result?.sites || []).map((x) => String(x.name || '').split('/').pop());
+let site = conf.hosting.site && sites.includes(conf.hosting.site) ? conf.hosting.site : sites.find((x) => x === SITE_PREF);
+if (!site) {
+  for (const tent of [SITE_PREF, 'ntlabs-site', 'ntlabs-' + Math.random().toString(36).slice(2, 7)]) {
+    console.log(`Criando o site "${tent}"...`);
+    if (fb(`hosting:sites:create ${tent}`, { json: true, ok: true })) { site = tent; break; }
+  }
+}
+if (!site) { console.error('Não consegui criar um site no Hosting.'); process.exit(1); }
+if (conf.hosting.site !== site) { conf.hosting.site = site; writeFileSync('firebase.json', JSON.stringify(conf, null, 2) + '\n'); }
+console.log('Site:', site);
+
 passo('Publicando site e regras');
 fb('deploy --only hosting,firestore:rules');
 
 console.log(`
-Pronto! Site no ar em: https://${PROJETO}.web.app
+Pronto! Site no ar em: https://${site}.web.app
 
 Falta só uma coisa para o painel (/#painel) funcionar:
   Firebase Console > Authentication > Método de login > Google > Ativar
