@@ -26,7 +26,7 @@ Site da NT Labs ([ntlabs.dev.br](https://ntlabs.dev.br)): portfólio de projetos
 4. Em Configurações do projeto › Contas de serviço, gere uma chave e salve o JSON no GitHub em *Settings › Secrets › Actions* com o nome `FIREBASE_SERVICE_ACCOUNT`.
 5. Em Hosting, adicione o domínio `ntlabs.dev.br` e crie no Registro.br os registros DNS que o Firebase mostrar.
 
-Para publicar do seu computador: `npx firebase-tools login` e depois `npx firebase-tools deploy`.
+Para publicar do seu computador: dê duplo clique em **`publicar-firebase.bat`** (ou rode `node scripts/publicar.mjs`). O script cria o app Web e o banco se faltarem, grava a configuração e publica o site e as regras no projeto `gerenciador-sites-74459`.
 
 ---
 Desenvolvido por [Bruno Freitas](https://github.com/BTFreitass) · NT Labs
