@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NT Labs · Sites profissionais para o seu negócio</title>
+<meta name="description" content="A NT Labs cria sites rápidos, bonitos e prontos para o celular. Você escolhe entre três modelos antes de começar e recebe os clientes direto no WhatsApp. Brasília/DF.">
+<meta name="theme-color" content="#0b0d10">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://ntlabs.dev.br/">
+<meta property="og:type" content="website"><meta property="og:url" content="https://ntlabs.dev.br/">
+<meta property="og:title" content="NT Labs · Sites profissionais para o seu negócio">
+<meta property="og:description" content="Sites rápidos e prontos para o celular. Você vê três modelos antes de decidir.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: estúdio de engenharia web, calmo e preciso, tipografia grande.
+   IDEA: a placa de circuito do NT ligando o negócio ao site e ao celular; o laboratório mostra o que está na bancada.
+   PICTURE: trilhas vermelhas animadas saindo do NT até navegador e celular; projetos com prévias que rolam sozinhas.
+   COLOUR and TYPE: grafite #0b0d10 com malha de pontos, aço #a3a9b4, vermelho NT #e3261c; Space Grotesk + Inter.
+   LAYOUT: estrutura do Modelo B — manchete gigante, linha com texto e cena, seções com fio e título à esquerda. */
+:root{color-scheme:dark;--bg:#0b0d10;--ink:#f1f2f4;--muted:#a3a9b4;--line:#22262d;--line-strong:#3a404b;--card:#12151a;--field:#0f1216;--accent:#e3261c;--accent-ink:#fff;--focus:#ff8a80;--link:#ff6a5f;--ok:#2fd27f;--radius:12px;--radius-btn:8px;--radius-f:8px;--font-d:'Space Grotesk',system-ui,sans-serif;--font-b:Inter,system-ui,sans-serif;--nav-bg:rgba(11,13,16,.9)}
+/* ===== base compartilhada: componentes, formulário, painel ===== */
+[hidden]{display:none!important}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--font-b);overflow-x:clip;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-d);line-height:1.08;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:inherit}
+img,svg{display:block}
+.ico{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.wrap{max-width:1240px;margin:0 auto}
+.band{padding:clamp(56px,8vw,112px) max(5vw,18px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:0 24px;border-radius:var(--radius-btn,999px);font:600 16px/1 var(--font-b);text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .15s,background .15s}
+.btn .ico{width:20px;height:20px}
+.btn-main{background:var(--accent);color:var(--accent-ink)}
+.btn-main .ico{fill:currentColor;stroke:none}
+.btn-ghost{background:transparent;color:var(--ink);border-color:var(--line-strong,var(--line))}
+.btn:hover{transform:translateY(-1px)}
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.chip input:focus-visible+span,.est input:focus-visible~.est-prev{outline:3px solid var(--focus,var(--accent));outline-offset:2px}
+.btn-sm{min-height:44px;padding:0 16px;font-size:14px}
+.logo{height:34px;width:auto;color:var(--logo,var(--accent))}
+
+/* navegação */
+.nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px max(5vw,18px);background:var(--nav-bg,var(--bg))}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;font:700 19px/1 var(--font-d)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{text-decoration:none;font-weight:500}
+.menu-btn{display:none;width:48px;height:48px;border:0;border-radius:12px;background:transparent;color:var(--ink);cursor:pointer}
+.menu-btn svg{width:26px;height:26px;margin:auto;stroke:currentColor;stroke-width:2;fill:none}
+@media(max-width:860px){
+  .menu-btn{display:block}
+  .nav-links{position:absolute;top:100%;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;padding:8px max(5vw,18px) 20px;background:var(--nav-bg,var(--bg));border-bottom:1px solid var(--line);display:none}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:14px 0;border-bottom:1px solid var(--line)}
+  .nav-links .btn{margin-top:14px;border-bottom:0}
+}
+
+/* selo e WhatsApp flutuante */
+.nt-badge{position:fixed;left:12px;bottom:12px;z-index:30;padding:6px 10px;border-radius:8px;background:rgba(15,16,20,.82);color:#fff;font:600 12px/1.2 system-ui,sans-serif;pointer-events:none}
+.nt-float{position:fixed;right:16px;bottom:16px;z-index:30;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#1faf5a;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.nt-float .ico{width:30px;height:30px;fill:currentColor;stroke:none}
+body:has(.painel:not([hidden])) :is(.nt-badge,.nt-float){display:none}
+
+/* serviços, passos, diferenciais, projetos (estrutura; estilo fino em cada modelo) */
+.svc p,.dif p,.step p,.proj p{color:var(--muted)}
+.svc-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;margin-top:auto;padding-top:18px;font-size:15px}
+.price b{font-size:19px;white-space:nowrap}
+.pz{color:var(--muted);white-space:nowrap}
+.step{display:flex;gap:16px}
+.dif{display:flex;gap:16px}
+.proj{display:flex;flex-direction:column;gap:8px;text-decoration:none}
+.proj-l{font-size:13px;font-weight:600;color:var(--muted)}
+.proj-go{margin-top:auto;padding-top:10px;font-weight:600;color:var(--link,var(--accent))}
+
+/* formulário */
+#f-pedido{display:grid;gap:26px}
+.f-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 22px}
+@media(max-width:640px){.f-grid{grid-template-columns:minmax(0,1fr)}}
+.fld{display:grid;gap:8px}
+.fld span,legend{font-weight:600;font-size:15px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:12px}
+legend{padding:0;margin-bottom:12px}
+input,select,textarea{width:100%;min-height:50px;padding:12px 14px;font:16px/1.4 var(--font-b);color:var(--ink);background:var(--field,transparent);border:1.5px solid var(--line-strong,var(--line));border-radius:var(--radius-f,12px)}
+textarea{resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{position:relative}
+.chip input,.est input{position:absolute;opacity:0;inset:0;margin:0;min-height:0;cursor:pointer}
+.chip span{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border:1.5px solid var(--line-strong,var(--line));border-radius:999px;font-size:15px;cursor:pointer;transition:background .15s}
+.chip input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.estilos{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.est{position:relative;display:grid;gap:8px;cursor:pointer}
+.est-prev{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:5px;aspect-ratio:4/3;padding:8px;border-radius:12px;background:var(--a);border:2px solid var(--line);transition:border-color .15s}
+.est-prev i{border-radius:5px;background:var(--b)}
+.est-prev i:first-child{grid-row:span 2;background:linear-gradient(var(--c) 0 22%,var(--b) 22%)}
+.est-prev i:last-child{background:var(--c)}
+.est-n{font-size:14px;font-weight:500}
+.est input:checked~.est-prev{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)}
+.f-err{color:var(--err,#d92d20);font-weight:600}
+.f-note{font-size:14px;color:var(--muted);margin-top:-12px}
+.f-ok{display:grid;gap:14px;justify-items:start;padding:28px;border-radius:var(--radius,16px);background:var(--card);border:1.5px solid var(--accent)}
+.f-ok h3{font-size:28px}
+
+/* painel */
+.painel{min-height:100vh;background:var(--pn-bg,var(--bg));padding:24px max(4vw,16px) 96px}
+.pn-wrap{max-width:1100px;margin:0 auto;display:grid;gap:20px}
+.pn-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px}
+.pn-top h1{font-size:clamp(28px,4vw,40px)}
+.pn-mode,.pn-sub{color:var(--muted);font-size:14px;margin-top:6px}
+.pn-body{display:grid;gap:20px}
+.pn-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media(max-width:760px){.pn-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.st,.pn-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius,16px);padding:18px}
+.st span{font-size:14px;color:var(--muted)}
+.st b{display:block;font:700 clamp(30px,5vw,42px)/1.1 var(--font-d);margin-top:6px}
+.pn-card h2{font-size:22px}
+.pn-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.bars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;height:180px;margin-top:18px;align-items:end}
+.bar{display:grid;grid-template-rows:auto 1fr auto;height:100%;gap:6px;text-align:center}
+.bar-v{font-size:13px;font-weight:600}
+.bar-f{align-self:end;background:var(--accent);border-radius:6px 6px 2px 2px;min-height:3px}
+.bar-d{font-size:12px;color:var(--muted)}
+.pn-tools{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:10px;margin:16px 0}
+@media(max-width:560px){.pn-tools{grid-template-columns:minmax(0,1fr)}}
+.ped{border-top:1px solid var(--line);padding:16px 0;display:grid;gap:12px}
+.ped-top{display:flex;justify-content:space-between;gap:12px}
+.ped-top h3{font-size:19px}
+.ped-top p,.ped-top time{color:var(--muted);font-size:14px;white-space:nowrap}
+.ped-top p{white-space:normal}
+.ped dl{margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 18px}
+.ped dt{font-size:13px;color:var(--muted)}
+.ped dd{margin:0;font-size:15px;overflow-wrap:anywhere}
+.ped-act{display:flex;flex-wrap:wrap;gap:10px}
+.ped-st{width:auto;min-height:44px}
+.pn-empty{padding:28px 8px;text-align:center;color:var(--muted)}
+.pn-empty h2{color:var(--ink);margin-bottom:8px}
+.pn-load{color:var(--muted)}
+footer .credit a{font-weight:600}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* ===== painel de gestão + carrossel de prints ===== */
+.pj-prev.shots{background:#0f1216}
+.pj-prev.shots img{position:absolute;inset:22px 0 0;width:100%;height:calc(100% - 22px);object-fit:cover;object-position:top;opacity:0;transform:scale(1.04);transition:opacity .9s ease,transform 3.2s ease}
+.pj-prev.shots img.on{opacity:1;transform:scale(1)}
+.sdots{position:absolute;left:0;right:0;bottom:8px;z-index:2;display:flex;justify-content:center;gap:6px}
+.sdots i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.45)}
+.sdots i.on{background:#fff;width:16px;border-radius:3px}
+.vazio{color:var(--muted)}
+.pn-tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);padding-bottom:2px}
+.pt{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:8px 8px 0 0;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:2px solid transparent}
+.pt.on{color:var(--ink);border-color:var(--accent)}
+.pt b{min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--accent);color:#fff;font-size:12px;display:inline-grid;place-items:center}
+.st small{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+.st b.money{font-size:clamp(22px,3.4vw,30px);white-space:nowrap}
+.pn-2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px}
+@media(max-width:860px){.pn-2{grid-template-columns:minmax(0,1fr)}}
+.lk{color:var(--link);font-weight:600;text-decoration:none;font-size:15px}
+.mini{list-style:none;margin:14px 0 0;padding:0}
+.mini li,.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.mini b,.row b{display:block}.mini span,.row span:not(.tag){color:var(--muted);font-size:14px}
+.mini time{white-space:nowrap;font-weight:600}
+.tag{flex:none;display:inline-block;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:600;background:#2a2f38;color:#d6dae1;white-space:nowrap}
+.t-novo,.t-Proposta{background:rgba(227,38,28,.18);color:#ff8a80}
+.t-Emdesenvolvimento,.t-Emhomologação,.t-Homologação,.t-emcontato,.t-propostaenviada{background:rgba(255,196,0,.14);color:#ffd666}
+.t-Entregue,.t-Noar,.t-Emprodução,.t-fechado,.t-Manutenção{background:rgba(47,210,127,.15);color:#6ee7a8}
+.pn-tools.one{grid-template-columns:minmax(0,1fr)}
+.cli{border-top:1px solid var(--line);padding:16px 0;display:grid;gap:12px}
+.cli h3 small{font-weight:500;color:var(--muted);font-size:15px}
+.ped-top p{white-space:normal}
+.note{padding:12px 14px;border-radius:10px;background:rgba(255,196,0,.08);border:1px solid rgba(255,196,0,.25);color:#ffe08a;font-size:14px;margin:12px 0}
+.prj{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.prj-th{width:72px;aspect-ratio:16/10;border-radius:8px;overflow:hidden;background:var(--field);border:1px solid var(--line)}
+.prj-th img{width:100%;height:100%;object-fit:cover}
+.prj-th span{display:block;height:100%;background:linear-gradient(135deg,var(--c),transparent 80%)}
+.prj-i h3{font-size:17px}.prj-i h3 small{color:var(--muted);font-weight:500}
+.prj-i p{margin-top:4px;color:var(--muted);font-size:14px;display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.prj-a,.rep-a{display:flex;gap:6px;align-items:center}
+.ib{width:44px;height:44px;border-radius:8px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);font-size:18px;cursor:pointer}
+.ib:disabled{opacity:.3;cursor:default}
+@media(max-width:560px){.prj{grid-template-columns:56px minmax(0,1fr)}.prj-th{width:56px}.prj-a{grid-column:1/-1;justify-content:flex-end}}
+.rep{display:grid;gap:14px;margin-top:14px}
+.rep-i{padding:16px;border:1px solid var(--line);border-radius:12px;display:grid;gap:12px}
+.rep-a{justify-content:flex-end}
+.full{grid-column:1/-1}
+.savebar{position:sticky;bottom:0;z-index:5;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(18,21,26,.95);backdrop-filter:blur(8px);color:var(--muted);font-size:14px}
+#tx-f{display:grid;gap:20px}
+.ed{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);display:grid;place-items:center;padding:16px}
+.ed-box{width:min(760px,100%);max-height:calc(100dvh - 32px);overflow:auto;background:var(--card);border:1px solid var(--line-strong);border-radius:16px;padding:20px}
+.ed-box header{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.ed-box h2{font-size:24px}
+.ed-act{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+@media(max-width:600px){.ed{padding:0;place-items:end stretch}.ed-box{max-height:92dvh;border-radius:16px 16px 0 0}}
+input[type=color]{padding:4px;height:50px}
+.ck{display:flex;align-items:center;gap:10px;min-height:50px;font-weight:600;font-size:15px;cursor:pointer}
+.ck input{width:22px;height:22px;min-height:0;accent-color:var(--accent)}
+.thumbs{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 8px}
+.thumbs figure{position:relative;margin:0;width:120px;aspect-ratio:16/10;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.thumbs img{width:100%;height:100%;object-fit:cover}
+.tx{position:absolute;top:4px;right:4px;width:32px;height:32px;border-radius:50%;border:0;background:rgba(0,0,0,.7);color:#fff;font-size:18px;cursor:pointer}
+.up{position:relative;justify-self:start;overflow:hidden}
+.up input{position:absolute;inset:0;opacity:0;cursor:pointer;min-height:0}
+.hint{color:var(--muted);font-size:13px}
+#bk-t{margin-top:12px;font:13px/1.4 ui-monospace,monospace}
+.toast{position:fixed;left:50%;bottom:20px;z-index:60;transform:translate(-50%,20px);opacity:0;padding:12px 18px;border-radius:10px;background:#f1f2f4;color:#0b0d10;font-weight:600;font-size:14px;transition:.25s;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+.login{max-width:420px;margin:24px auto;display:grid;gap:16px}
+body{background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1.2px);background-size:22px 22px}
+h1,h2{letter-spacing:-.02em}
+.nav{border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
+.nav-links a:not(.btn){color:var(--muted)}.nav-links a:not(.btn):hover{color:var(--ink)}
+.hero{padding:clamp(28px,5vw,64px) max(5vw,18px) clamp(40px,6vw,80px);overflow:hidden}
+.pill{display:inline-flex;align-items:center;gap:10px;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--line-strong);background:rgba(18,21,26,.8);color:var(--muted);font-size:14px;text-decoration:none;transition:border-color .2s}
+.pill:hover{border-color:var(--ok);color:var(--ink)}
+.pill b{color:var(--ink);font-weight:600}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(47,210,127,.6);animation:pulse 2s infinite;flex:none}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(47,210,127,0)}100%{box-shadow:0 0 0 0 rgba(47,210,127,0)}}
+.hero-in{max-width:1240px;margin:0 auto}
+.hero h1{margin-top:24px;font-size:clamp(42px,8vw,108px);line-height:.98}
+.hero-row{margin-top:clamp(24px,3vw,40px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:clamp(24px,4vw,56px);align-items:center}
+.hero-p{font-size:clamp(17px,1.5vw,19px);color:var(--muted);max-width:42ch}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.scene svg{width:100%;height:auto}
+.trace{fill:none;stroke:#e3261c;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.trace.run{stroke-dasharray:14 22;animation:run 2.4s linear infinite}
+@keyframes run{to{stroke-dashoffset:-72}}
+.node{fill:#0b0d10;stroke:#e3261c;stroke-width:3}
+.rule{max-width:1240px;margin:0 auto;border-top:2px solid var(--ink)}
+.sec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);gap:clamp(20px,5vw,80px);padding-top:28px}
+.sec>h2,.sec-t h2{font-size:clamp(30px,4vw,46px);line-height:1}
+.sec-lead{font-size:18px;color:var(--muted);margin-bottom:28px;max-width:56ch}
+/* projetos */
+.proj-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:18px;padding-top:28px;margin-bottom:28px}
+.sec-t{display:grid;gap:10px}.sec-t p{color:var(--muted);font-size:18px;max-width:52ch}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line-strong);background:transparent;color:var(--muted);font:500 15px var(--font-b);cursor:pointer}
+.tab[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab span{opacity:.7;margin-left:4px}
+#nt-proj{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(18px,2.4vw,28px)}
+.pj{display:flex;flex-direction:column;gap:14px;padding:14px 14px 22px;border:1px solid var(--line);border-radius:16px;background:var(--card);transition:border-color .2s,transform .3s}
+.pj:hover{border-color:var(--line-strong);transform:translateY(-3px)}
+.pj-prev{position:relative;aspect-ratio:16/10;border-radius:10px;overflow:hidden;background:var(--pb);border:1px solid var(--line)}
+.pj-prev .bar{position:absolute;inset:0 0 auto;height:22px;z-index:2;display:flex;align-items:center;gap:5px;padding:0 10px;background:rgba(0,0,0,.35);backdrop-filter:blur(4px)}
+.pj-prev .bar i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35)}
+.pj-prev .bar i:first-child{background:#e3261c}
+.pj-prev .bar em{margin-left:8px;font:500 10px var(--font-b);font-style:normal;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pg{position:absolute;inset:22px 0 auto;padding:7% 7% 0;color:var(--pi);animation:scrollpg 14s ease-in-out infinite;animation-delay:var(--d)}
+.pj:hover .pg{animation-play-state:paused}
+@keyframes scrollpg{0%,12%{transform:translateY(0)}45%,62%{transform:translateY(-46%)}95%,100%{transform:translateY(0)}}
+.pg h4{margin:0 0 4px;font:700 clamp(15px,1.8vw,22px)/1.1 var(--pf,var(--font-d))}
+.pg p{font-size:11px;opacity:.75;margin-bottom:10px}
+.pg .cta{display:inline-block;padding:5px 10px;border-radius:6px;background:var(--pa);color:#fff;font:600 10px var(--font-b);margin-bottom:12px}
+.pg .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.pg .grid div{aspect-ratio:1;border-radius:8px;background:var(--pc);display:flex;align-items:flex-end;padding:6px;font-size:9px;font-weight:600}
+.pg .grid div:nth-child(3n+1){background:linear-gradient(160deg,var(--pa),var(--pc) 70%)}
+.pg .rows div{height:16px;border-radius:5px;background:var(--pc);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;padding:0 8px;font-size:9px}
+.pg .rows b{color:var(--pa)}
+.chart{display:flex;align-items:flex-end;gap:5px;height:70px;margin-bottom:12px}
+.chart i{flex:1;border-radius:3px 3px 0 0;background:var(--pa);height:var(--h);transform-origin:bottom;animation:grow 2.4s ease-in-out infinite alternate}
+.chart i:nth-child(even){background:var(--pc)}
+@keyframes grow{from{transform:scaleY(.35)}to{transform:scaleY(1)}}
+.prog{height:8px;border-radius:4px;background:var(--pc);overflow:hidden;margin-bottom:12px}
+.prog i{display:block;height:100%;width:100%;background:var(--pa);transform-origin:left;animation:fillp 3s ease-in-out infinite}
+@keyframes fillp{from{transform:scaleX(0)}70%,to{transform:scaleX(1)}}
+.count{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;text-align:center}
+.count div{padding:6px 0;border-radius:6px;background:var(--pc);font:700 14px/1.1 var(--pf,var(--font-d))}
+.count small{display:block;font:500 8px var(--font-b);opacity:.7}
+.pj-cap{position:absolute;right:8px;bottom:8px;z-index:2;padding:3px 7px;border-radius:5px;background:rgba(0,0,0,.55);color:#fff;font-size:10px}
+.pj-meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:0 6px;font-size:14px;color:var(--muted)}
+.st-tag{display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border-radius:999px;border:1px solid var(--line-strong);color:var(--ink);font-size:13px;font-weight:500}
+.st-tag.done::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.pj h3{padding:0 6px;font-size:clamp(20px,2vw,24px)}
+.pj>p{padding:0 6px;color:var(--muted)}
+.pj-links{display:flex;flex-wrap:wrap;gap:8px 18px;padding:0 6px;margin-top:auto}
+.pj-links a{color:var(--link);font-weight:600;text-decoration:none;min-height:32px;display:inline-flex;align-items:center}
+.pj-links span{color:var(--muted);font-size:14px;display:inline-flex;align-items:center}
+.gh{margin-top:28px}
+/* serviços (lista com fios, do modelo B) */
+#nt-servicos{display:grid}
+.svc{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 22px;align-items:start;padding:24px 0;border-top:1px solid var(--line)}
+.svc:last-child{border-bottom:1px solid var(--line)}
+.svc .ico{grid-row:span 2;color:var(--accent);margin-top:2px}
+.svc h3{font-size:23px}
+.svc p{grid-column:2}
+.svc-foot{grid-column:3;grid-row:1/span 2;flex-direction:column;align-items:flex-end;margin:0;padding:0;text-align:right}
+#nt-passos{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 36px}
+.step{padding:22px 0;border-top:1px solid var(--line)}
+.step-n{font:700 38px/1 var(--font-d);color:var(--accent);min-width:1.1em}
+.step h3{font-size:21px;margin-bottom:6px}
+#nt-difs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 36px;margin-top:40px;padding:28px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+.dif .ico{color:var(--accent)}.dif h3{font-size:18px;margin-bottom:4px}
+.order-intro{display:grid;gap:18px;align-content:start}
+.tel{font:700 clamp(26px,3vw,34px)/1 var(--font-d)}
+#nt-form{padding:clamp(20px,3vw,34px);border:1px solid var(--line);border-radius:16px;background:var(--card)}
+footer{padding:40px max(5vw,18px) 90px;border-top:1px solid var(--line)}
+.foot{max-width:1240px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px 28px;justify-content:space-between;align-items:center;font-size:15px;color:var(--muted)}
+.foot a{color:var(--ink)}
+/* entrada ao rolar */
+.js .rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.js .rv.in{opacity:1;transform:none}
+@media(max-width:900px){.hero-row,.sec{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){#nt-proj{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:640px){#nt-passos,#nt-difs{grid-template-columns:minmax(0,1fr)}.svc{grid-template-columns:auto minmax(0,1fr)}.svc-foot{grid-column:2;grid-row:auto;flex-direction:row;align-items:baseline;text-align:left;padding-top:8px}}
+@media(prefers-reduced-motion:reduce){.js .rv{opacity:1;transform:none}}
+</style>
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="nt-logo" viewBox="21 11 961 654"><path d="M481.0 31.0 L481.0 424.6 L599.0 542.5 L525.1 618.1 L313.0 394.8 L315.7 389.2 L317.3 383.4 L317.9 379.0 L318.0 376.0 L317.5 370.1 L316.1 364.3 L314.5 360.1 L313.2 357.4 L311.6 354.9 L308.9 351.3 L304.7 347.1 L299.9 343.6 L294.5 340.9 L288.9 339.0 L283.0 338.1 L277.0 338.1 L271.1 339.0 L265.5 340.9 L260.1 343.6 L255.3 347.1 L251.1 351.3 L247.6 356.1 L244.9 361.5 L243.0 367.1 L242.1 373.0 L242.1 379.0 L243.0 384.9 L244.3 389.2 L246.1 393.3 L248.4 397.1 L251.1 400.7 L253.1 402.9 L256.5 405.8 L260.1 408.4 L264.1 410.5 L268.3 412.1 L272.6 413.3 L277.0 413.9 L280.0 414.0 L284.5 413.7 L288.9 413.0 L293.2 411.7 L297.1 409.9 L520.3 645.0 L621.0 645.0 L621.0 196.4 L624.5 195.1 L628.6 193.2 L631.1 191.6 L634.7 188.9 L636.9 186.9 L639.8 183.5 L642.4 179.9 L644.5 176.0 L843.2 176.0 L962.2 32.4 L961.6 31.0Z M599.0 511.4 L503.0 415.4 L503.0 68.6 L576.5 142.1 L574.9 145.5 L573.4 149.7 L572.5 154.1 L572.0 158.5 L572.0 161.5 L572.5 165.9 L573.4 170.3 L574.9 174.5 L576.1 177.3 L578.4 181.1 L581.1 184.7 L584.2 187.9 L587.7 190.7 L591.4 193.2 L595.5 195.1 L599.0 196.4Z M551.1 623.0 L599.0 574.0 L599.0 623.0Z M295.6 379.7 L294.5 382.7 L292.9 385.4 L290.9 387.7 L288.4 389.6 L285.5 391.0 L282.5 391.8 L279.4 392.0 L276.3 391.6 L273.3 390.5 L270.6 388.9 L268.3 386.9 L266.4 384.4 L265.0 381.5 L264.2 378.5 L264.0 375.4 L264.4 372.3 L265.5 369.3 L267.1 366.6 L269.1 364.3 L271.6 362.4 L274.5 361.0 L277.5 360.2 L280.6 360.0 L283.7 360.4 L286.7 361.5 L289.4 363.1 L291.7 365.1 L293.6 367.6 L295.0 370.5 L295.8 373.5 L296.0 376.6Z M646.6 149.7 L645.1 145.5 L643.2 141.4 L640.7 137.7 L637.9 134.2 L634.7 131.1 L632.3 129.3 L628.6 126.8 L624.5 124.9 L620.3 123.4 L615.9 122.5 L611.5 122.0 L608.5 122.0 L604.1 122.5 L599.7 123.4 L595.5 124.9 L592.1 126.5 L518.6 53.0 L916.6 53.0 L832.8 154.0 L647.5 154.0Z M625.6 163.7 L624.5 166.7 L622.9 169.4 L620.9 171.7 L618.4 173.6 L615.5 175.0 L612.5 175.8 L609.4 176.0 L606.3 175.6 L603.3 174.5 L600.6 172.9 L598.3 170.9 L596.4 168.4 L595.0 165.5 L594.2 162.5 L594.0 159.4 L594.4 156.3 L595.5 153.3 L597.1 150.6 L599.1 148.3 L601.6 146.4 L604.5 145.0 L607.5 144.2 L610.6 144.0 L613.7 144.4 L616.7 145.5 L619.4 147.1 L621.7 149.1 L623.6 151.6 L625.0 154.5 L625.8 157.5 L626.0 160.6Z M347.6 282.2 L345.5 286.1 L343.9 290.3 L342.7 294.6 L342.3 297.5 L342.0 302.0 L342.1 305.0 L342.5 307.9 L343.4 312.3 L344.3 315.2 L346.1 319.3 L347.6 321.9 L350.2 325.5 L352.1 327.8 L355.3 330.9 L358.9 333.6 L361.4 335.2 L364.1 336.5 L368.3 338.1 L372.6 339.3 L375.5 339.7 L380.0 340.0 L383.0 339.9 L385.9 339.5 L390.3 338.6 L393.2 337.7 L397.3 335.9 L401.1 333.6 L403.5 331.8 L405.8 329.9 L408.9 326.7 L411.6 323.1 L413.2 320.6 L415.7 315.2 L417.3 309.4 L418.0 303.5 L417.7 297.5 L416.6 291.7 L414.5 286.1 L411.6 280.9 L407.9 276.2 L403.5 272.2 L398.6 268.8 L393.2 266.3 L387.4 264.7 L381.5 264.0 L375.5 264.3 L369.7 265.4 L364.0 267.5 L152.9 31.0 L41.0 31.0 L41.0 534.4 L126.2 623.0 L41.0 623.0 L41.0 645.0 L193.0 645.0 L193.0 263.4 L67.6 138.0 L147.5 58.0Z M121.4 53.0 L63.0 111.4 L63.0 53.0Z M395.6 305.7 L394.5 308.7 L392.9 311.4 L390.9 313.7 L388.4 315.6 L385.5 317.0 L382.5 317.8 L379.4 318.0 L376.3 317.6 L373.3 316.5 L370.6 314.9 L368.3 312.9 L366.4 310.4 L365.0 307.5 L364.2 304.5 L364.0 301.4 L364.4 298.3 L365.5 295.3 L367.1 292.6 L369.1 290.3 L371.6 288.4 L374.5 287.0 L377.5 286.2 L380.6 286.0 L383.7 286.4 L386.7 287.5 L389.4 289.1 L391.7 291.1 L393.6 293.6 L395.0 296.5 L395.8 299.5 L396.0 302.6Z M171.0 623.0 L156.7 623.0 L63.0 525.6 L63.0 164.6 L171.0 272.6Z M731.0 214.4 L731.0 545.3 L960.8 382.1Z M753.0 257.6 L923.2 381.9 L753.0 502.7Z" fill="currentColor" fill-rule="evenodd"/></symbol></svg>
+<div id="site">
+<header class="nav">
+  <a class="brand" href="#inicio"><svg class="logo" viewBox="21 11 961 654" aria-hidden="true"><use href="#nt-logo"/></svg>NT Labs</a>
+  <button class="menu-btn" aria-label="Abrir menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+  <nav class="nav-links"><a href="#projetos">Projetos</a><a href="#servicos">Serviços</a><a href="#como">Processo</a><a class="btn btn-main btn-sm" href="#orcamento">Pedir orçamento</a></nav>
+</header>
+<main>
+<section class="hero" id="inicio"><div class="hero-in">
+  <a class="pill" href="#projetos" id="pill"><span class="dot"></span><span id="pill-t">Projetos</span><span aria-hidden="true">→</span></a>
+  <h1 data-t="hero_titulo">Seu site novo, desenhado antes de ser construído.</h1>
+  <div class="hero-row">
+    <div><p class="hero-p" data-t="hero_texto">Na NT Labs você recebe três modelos do seu site para escolher. Depois, a gente constrói o escolhido, pronto para o celular e ligado ao seu WhatsApp.</p>
+    <div class="hero-cta"><a class="btn btn-main" href="#orcamento" data-t="hero_botao">Pedir orçamento</a><a class="btn btn-ghost" data-wa>WhatsApp <span data-tel>(61) 98451-5281</span></a></div></div>
+  <div class="scene" aria-hidden="true">
+    <svg viewBox="0 0 1240 440" preserveAspectRatio="xMidYMid meet">
+      <defs><linearGradient id="scr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b1f27"/><stop offset="1" stop-color="#12151b"/></linearGradient></defs>
+      <path class="trace" d="M310 220 H420 L470 170 H560"/><path class="trace run" d="M310 220 H420 L470 170 H560"/>
+      <path class="trace" d="M310 250 H400 L460 310 H760 L800 270 H860"/><path class="trace run" d="M310 250 H400 L460 310 H760 L800 270 H860"/>
+      <path class="trace" d="M200 330 V400 H1000 V360"/>
+      <circle class="node" cx="310" cy="220" r="9"/><circle class="node" cx="310" cy="250" r="9"/><circle class="node" cx="560" cy="170" r="9"/><circle class="node" cx="860" cy="270" r="9"/><circle class="node" cx="200" cy="330" r="9"/><circle class="node" cx="1000" cy="360" r="9"/>
+      <g transform="translate(60 120)"><rect width="250" height="210" rx="22" fill="#14171d" stroke="#2a2f38"/><svg x="38" y="40" width="174" height="130" viewBox="21 11 961 654"><use href="#nt-logo" style="color:#e3261c"/></svg></g>
+      <g transform="translate(560 40)"><rect width="440" height="300" rx="16" fill="url(#scr)" stroke="#2f3540"/><rect width="440" height="34" rx="16" fill="#20242c"/><circle cx="22" cy="17" r="5" fill="#e3261c"/><circle cx="40" cy="17" r="5" fill="#3a404b"/><circle cx="58" cy="17" r="5" fill="#3a404b"/>
+        <rect x="28" y="60" width="210" height="22" rx="6" fill="#f1f2f4"/><rect x="28" y="92" width="160" height="12" rx="6" fill="#4a505c"/><rect x="28" y="112" width="180" height="12" rx="6" fill="#4a505c"/><rect x="28" y="142" width="104" height="34" rx="8" fill="#e3261c"/>
+        <rect x="266" y="56" width="146" height="124" rx="12" fill="#262b34"/><path d="M286 160 L326 112 L352 140 L370 122 L394 160Z" fill="#3a404b"/><circle cx="374" cy="88" r="12" fill="#e3261c" opacity=".8"/>
+        <rect x="28" y="206" width="120" height="70" rx="10" fill="#1f232b"/><rect x="160" y="206" width="120" height="70" rx="10" fill="#1f232b"/><rect x="292" y="206" width="120" height="70" rx="10" fill="#1f232b"/></g>
+      <g transform="translate(1030 110)"><rect width="150" height="290" rx="26" fill="#14171d" stroke="#3a404b" stroke-width="2"/><rect x="12" y="34" width="126" height="222" rx="12" fill="#1b1f27"/><rect x="24" y="52" width="80" height="12" rx="6" fill="#f1f2f4"/><rect x="24" y="72" width="100" height="8" rx="4" fill="#4a505c"/><rect x="24" y="96" width="102" height="70" rx="10" fill="#262b34"/>
+        <rect x="24" y="206" width="102" height="34" rx="17" fill="#1faf5a"/><circle cx="44" cy="223" r="8" fill="#fff"/><rect x="58" y="219" width="54" height="8" rx="4" fill="#fff" opacity=".9"/></g>
+      <path class="trace" d="M1000 300 H1030"/>
+    </svg>
+  </div>
+  </div>
+</div></section>
+
+<section class="band" id="projetos" style="padding-top:0"><div class="rule"></div><div class="wrap">
+  <div class="proj-head rv">
+    <div class="sec-t"><h2 data-t="proj_titulo">Meus projetos</h2><p data-t="proj_texto">O que está na bancada agora e o que já foi entregue. As prévias rolam sozinhas: passe o dedo ou o mouse para pausar.</p></div>
+    <div class="tabs" role="group" aria-label="Filtrar projetos" id="tabs"></div>
+  </div>
+  <div id="nt-proj"></div>
+  <a class="btn btn-ghost gh" data-gh>Ver todos no GitHub</a>
+</div></section>
+
+<section class="band" id="servicos" style="padding-top:0"><div class="rule"></div><div class="wrap sec rv">
+  <h2 data-t="serv_titulo">Serviços e preços</h2>
+  <div><p class="sec-lead" data-t="serv_texto">Valores de partida para você se planejar. O preço final sai depois da conversa, sem letra miúda.</p><div id="nt-servicos"></div>
+  <p style="margin-top:18px;color:var(--muted)" data-t="serv_manut">Manutenção mensal com atualizações, backup e suporte: a partir de R$ 89/mês.</p></div>
+</div></section>
+
+<section class="band" id="como" style="padding-top:0"><div class="rule"></div><div class="wrap sec rv">
+  <h2 data-t="proc_titulo">Processo</h2>
+  <div><p class="sec-lead" data-t="proc_texto">Quatro etapas, todas com a sua aprovação.</p><ol id="nt-passos"></ol><div id="nt-difs"></div></div>
+</div></section>
+
+<section class="band" id="orcamento" style="padding-top:0"><div class="rule"></div><div class="wrap sec rv">
+  <div class="order-intro"><h2 data-t="orc_titulo">Peça seu orçamento</h2><p style="color:var(--muted)" data-t="orc_texto">Leva 2 minutos. Responda o que souber, o resto a gente descobre junto.</p><span class="tel" data-tel>(61) 98451-5281</span><a class="btn btn-ghost btn-sm" data-wa style="justify-self:start">Chamar no WhatsApp</a></div>
+  <div id="nt-form"></div>
+</div></section>
+</main>
+<footer><div class="foot">
+  <a class="brand" href="#inicio"><svg class="logo" viewBox="21 11 961 654" aria-hidden="true"><use href="#nt-logo"/></svg>NT Labs</a>
+  <p class="credit" id="nt-credito"></p>
+  <a href="#painel">Painel do administrador</a>
+</div></footer>
+</div>
+<script>window.NT_MODEL={id:'B v2',nome:'Estúdio Circuito'};</script>
+<script>{
+/* ===== NT Labs — site + painel de gestão (v3) ===== */
+const M = window.NT_MODEL || {id:'B v3', nome:'Estúdio Circuito'};
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = (u) => /^https:\/\//i.test(String(u || '').trim()) ? String(u).trim() : '';
+const ico = (p) => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="${p}"/></svg>`;
+const I = {
+  page:'M5 3h10l4 4v14H5zM14 3v5h5M8 13h8M8 17h6', site:'M3 5h18v14H3zM3 9h18M7 7h.01M10 7h.01', cat:'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+  cart:'M3 4h2l2.4 11h10.2L20 7H6.3M9 20h.01M17 20h.01', gear:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2',
+  phone:'M8 2h8v20H8zM11 18h2', bolt:'M13 2 4 14h7l-1 8 9-12h-7z', eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  chat:'M4 4h16v12H8l-4 4z', code:'M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16', star:'M12 3l2.8 5.8 6.2.9-4.5 4.4 1 6.2L12 17.4 6.5 20.3l1-6.2L3 9.7l6.2-.9z',
+  wa:'M12 3a9 9 0 0 0-7.8 13.5L3 21l4.6-1.2A9 9 0 1 0 12 3zM8.5 8c.3-.6.6-.6 1-.6l.6.1 1 2.2-.6 1c.6 1.2 1.5 2 2.7 2.6l1-.7 2.2 1c0 .6-.4 1.6-1.6 1.8-1.2.2-3.6-.6-5.4-2.6S8.2 8.7 8.5 8z'
+};
+const ICONES = {page:'Página', site:'Site', cat:'Catálogo', cart:'Carrinho', gear:'Engrenagem', phone:'Celular', bolt:'Raio', eye:'Olho', chat:'Conversa', code:'Código', star:'Estrela'};
+const GH = 'https://github.com/BTFreitass';
+
+/* ---------- conteúdo padrão (usado até o painel salvar o seu) ---------- */
+const PADRAO = {
+  textos: {
+    hero_titulo:'Seu site novo, desenhado antes de ser construído.',
+    hero_texto:'Na NT Labs você recebe três modelos do seu site para escolher. Depois, a gente constrói o escolhido, pronto para o celular e ligado ao seu WhatsApp.',
+    hero_botao:'Pedir orçamento',
+    proj_titulo:'Meus projetos',
+    proj_texto:'O que está na bancada agora e o que já foi entregue. As prévias rolam sozinhas: passe o dedo ou o mouse para pausar.',
+    serv_titulo:'Serviços e preços',
+    serv_texto:'Valores de partida para você se planejar. O preço final sai depois da conversa, sem letra miúda.',
+    serv_manut:'Manutenção mensal com atualizações, backup e suporte: a partir de R$ 89/mês.',
+    proc_titulo:'Processo',
+    proc_texto:'Quatro etapas, todas com a sua aprovação.',
+    orc_titulo:'Peça seu orçamento',
+    orc_texto:'Leva 2 minutos. Responda o que souber, o resto a gente descobre junto.',
+    whats:'5561984515281',
+    whats_msg:'Olá! Vim pelo site da NT Labs e quero um orçamento de site.'
+  },
+  servicos: [
+    {t:'Landing page', i:'page', d:'Uma página feita para vender um produto ou serviço, com botão direto para o seu WhatsApp.', p:'R$ 690', pz:'5 dias'},
+    {t:'Site institucional', i:'site', d:'Até 5 páginas para apresentar a empresa, os serviços, a equipe e onde encontrar você.', p:'R$ 1.290', pz:'10 dias'},
+    {t:'Catálogo + WhatsApp', i:'cat', d:'Vitrine com fotos e preços. O cliente monta o pedido e ele chega pronto no seu WhatsApp.', p:'R$ 1.590', pz:'12 dias'},
+    {t:'Loja virtual', i:'cart', d:'Carrinho, cálculo de frete e pagamento online por Pix e cartão.', p:'R$ 2.890', pz:'20 dias'},
+    {t:'Sistema sob medida', i:'gear', d:'Painel administrativo, agendamentos, cadastros e relatórios do jeito do seu negócio.', p:'', pz:'a combinar'}
+  ],
+  passos: [
+    {t:'Conversa', d:'Você conta sobre o seu negócio pelo formulário ou pelo WhatsApp.'},
+    {t:'Três modelos', d:'Você recebe no mínimo três prévias navegáveis, prontas para abrir no celular.'},
+    {t:'Ajustes', d:'Refinamos o modelo escolhido com seus textos, fotos e cores.'},
+    {t:'No ar', d:'Publicação com domínio próprio, Google e WhatsApp configurados.'}
+  ],
+  difs: [
+    {t:'Pensado para o celular', i:'phone', d:'A maioria dos seus clientes vai abrir pelo telefone. Começamos por ele.'},
+    {t:'Rápido de carregar', i:'bolt', d:'Código leve, sem plugin pesado. Página lenta perde cliente.'},
+    {t:'Você vê antes de pagar tudo', i:'eye', d:'As prévias chegam antes do desenvolvimento. Nada de surpresa no final.'},
+    {t:'Fala direto com quem faz', i:'chat', d:'Sem atendente intermediário: você conversa com o desenvolvedor.'}
+  ]
+};
+const TEMAS = {
+  imob:{n:'Imobiliária', pal:['#f4f6f8','#14213d','#0a6cff','#ffffff'], h:'Encontre seu imóvel', items:['Casa 3 qts','Apto 2 qts','Lote 360m²','Sobrado','Kitnet','Cobertura']},
+  loja:{n:'Loja / catálogo', pal:['#fff5f7','#3b1022','#d6336c','#ffe3ec'], h:'Nova coleção', items:['Produto 1','Produto 2','Produto 3','Produto 4','Produto 5','Produto 6'], pf:'Georgia,serif'},
+  fin:{n:'Finanças', pal:['#0f1a14','#e9f5ee','#2fd27f','#18291f'], h:'Saldo do mês'},
+  ext:{n:'Automação', pal:['#f3f4f6','#111827','#e3261c','#ffffff'], h:'Processando arquivos'},
+  app:{n:'Aplicativo', pal:['#101828','#f2f4f7','#7a5af8','#1d2939'], h:'Lançamentos'},
+  wed:{n:'Evento', pal:['#fbf8f3','#3d3529','#b08d57','#f1e9dc'], h:'Ana & Pedro', pf:'Georgia,serif'},
+  cup:{n:'Campeonato', pal:['#06281b','#eafff4','#ffd400','#0d3b29'], h:'Tabela'},
+  car:{n:'Veículos', pal:['#111214','#f5f5f5','#ff5a1f','#1d1f22'], h:'Seminovos', items:['Sedan 2020','Hatch 2019','SUV 2022','Picape 2021','Coupé 2018','SUV 2020']},
+  gen:{n:'Site genérico', pal:['#0f1216','#f1f2f4','#e3261c','#1b1f26'], items:['Serviço 1','Serviço 2','Serviço 3']}
+};
+const PST = ['Em desenvolvimento','Em homologação','Em produção','Entregue','Pausado'];
+const ANDAMENTO = ['Em desenvolvimento','Em homologação'];
+const CST = ['Proposta','Em desenvolvimento','Homologação','No ar','Manutenção','Pausado','Encerrado'];
+const PROJ_PADRAO = [
+  {nome:'Sistema para imobiliária com CCA', tipo:'Sistema web', status:'Em desenvolvimento', desc:'Site de imóveis com simulação de financiamento e área do Correspondente CAIXA Aqui integrada.', tema:'imob'},
+  {nome:'Catálogo para loja de moda íntima', tipo:'Catálogo + WhatsApp', status:'Em desenvolvimento', desc:'Vitrine de produtos com tamanhos e cores; o pedido chega montado no WhatsApp da loja.', tema:'loja'},
+  {nome:'Finance', tipo:'Aplicação web', status:'Entregue', desc:'Aplicação web de organização financeira.', gh:GH + '/Finance', tema:'fin'},
+  {nome:'DEC-DOWNLOADER', tipo:'Extensão do Chrome', status:'Entregue', desc:'Automatiza o download de documentos XML no portal Agência Net DF.', gh:GH + '/DEC-DOWNLOADER', tema:'ext'},
+  {nome:'FinApp2.0', tipo:'Aplicativo Java', status:'Entregue', desc:'Aplicativo de controle financeiro.', gh:GH + '/FinApp2.0', tema:'app'},
+  {nome:'MeuCasamento', tipo:'Site de evento', status:'Entregue', desc:'Site de casamento com as informações do evento.', gh:GH + '/MeuCasamento', tema:'wed'},
+  {nome:'Copa-Kaleo2', tipo:'Site de campeonato', status:'Entregue', desc:'Site do campeonato Copa Kaleo.', gh:GH + '/Copa-Kaleo2', tema:'cup'},
+  {nome:'TopCarros', tipo:'Site em PHP', status:'Entregue', desc:'Site de carros desenvolvido em PHP.', gh:GH + '/TopCarros', tema:'car'}
+].map((p, i) => ({id:'p' + i, visivel:true, ordem:i + 1, site:'', gh:'', imgs:[], ...p, src:'padrao'}));
+
+/* ---------- dados: API do servidor (Vercel) ---------- */
+const S = {db:true, token:null, owner:false, assets:null, site:null, adm:null};
+try { S.token = localStorage.getItem('ntlabs-token'); } catch {}
+S.owner = !!S.token;
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const boot = Promise.resolve();
+const limpo = (o) => { const c = {...o}; delete c.src; return c; };
+async function api(acao, dados, raw) {
+  const r = await fetch('/api/admin?acao=' + acao, {method:'POST', headers:{'Authorization':'Bearer ' + (S.token || ''), 'Content-Type': raw ? raw.type : 'application/json'}, body: raw || JSON.stringify(dados || {})});
+  if (r.status === 401) { sair(); throw new Error('login'); }
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).erro || 'Erro ' + r.status);
+  return r.json();
+}
+function sair() { S.token = null; S.owner = false; S.assets = null; try { localStorage.removeItem('ntlabs-token'); } catch {} }
+async function compactar(file) {
+  try {
+    const bmp = await createImageBitmap(file); const k = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
+    cv.getContext('2d').drawImage(bmp, 0, 0, cv.width, cv.height);
+    return await new Promise(res => cv.toBlob(b => res(b || file), 'image/webp', .85));
+  } catch { return file; }
+}
+const uploader = {upload: async (f) => api('upload', null, await compactar(f))};
+async function carregarAdmin() { S.adm = await api('dados'); S.assets = uploader; return S.adm; }
+async function listar(col) { if (!S.adm) await carregarAdmin(); return (S.adm[col] || []).map(x => ({...x, src:'db'})); }
+async function gravar(col, it) {
+  if (col === 'pedidos' && it.src === 'novo') { const r = await fetch('/api/pedido', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(limpo(it))}); if (!r.ok) throw new Error('falha'); return it; }
+  if (col === 'visitas') { fetch('/api/visita', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({cel:it.cel, origem:it.origem}), keepalive:true}).catch(() => {}); return it; }
+  const r = await api('salvar', {col, item:limpo(it.src === 'novo' ? {...it, id:undefined} : it)});
+  it.id = r.item.id; it.src = 'db'; S.adm = null; return it;
+}
+async function apagar(col, it) { await api('excluir', {col, id:it.id}); S.adm = null; }
+async function lerSite() { if (!S.site) { try { const r = await fetch('/api/site'); if (r.ok) S.site = await r.json(); } catch {} } return S.site || {}; }
+async function lerConteudo() { if (S.owner && S.adm) return S.adm.conteudo; return (await lerSite()).conteudo || null; }
+async function salvarConteudo(c) { await api('conteudo', {conteudo:c}); S.site = null; return 'db'; }
+const juntar = (c) => ({textos:{...PADRAO.textos, ...(c?.textos || {})}, servicos:c?.servicos || PADRAO.servicos, passos:c?.passos || PADRAO.passos, difs:c?.difs || PADRAO.difs});
+async function projetosSite() {
+  const l = (await lerSite()).projetos;
+  return (l && l.length ? l : PROJ_PADRAO).slice().sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+}
+
+/* ---------- render do site ---------- */
+let C = juntar(null), PROJ = PROJ_PADRAO.slice();
+const telFmt = (n) => { const d = String(n).replace(/\D/g, '').replace(/^55/, ''); return d.length >= 10 ? `(${d.slice(0, 2)}) ${d.slice(2, -4)}-${d.slice(-4)}` : d; };
+const wa = (t) => 'https://wa.me/' + String(C.textos.whats).replace(/\D/g, '') + '?text=' + encodeURIComponent(t || C.textos.whats_msg);
+const tema = (p) => TEMAS[p.tema] || TEMAS.gen;
+const g3 = (a) => `<div class="grid">${a.map(x => `<div>${esc(x)}</div>`).join('')}</div>`;
+const rws = (a) => `<div class="rows">${a.map(r => `<div><span>${esc(r[0])}</span><b>${esc(r[1])}</b></div>`).join('')}</div>`;
+const chart = () => `<div class="chart">${[40,65,50,80,58,92,70,85].map((h, i) => `<i style="--h:${h}%;animation-delay:${i * .12}s"></i>`).join('')}</div>`;
+function corpo(p) {
+  const T = tema(p), it = T.items || [];
+  switch (p.tema) {
+    case 'imob': return `<span class="cta">Simular financiamento</span>${g3(it)}${rws([['Entrada','20%'],['Parcelas','360x'],['Aprovação','CCA']])}`;
+    case 'loja': return `<span class="cta">Pedir no WhatsApp</span>${g3(it)}${g3(it.slice().reverse())}`;
+    case 'fin': return `<p>R$ 4.820,00 disponível</p>${chart()}${rws([['Mercado','-R$ 612'],['Salário','+R$ 3.200'],['Internet','-R$ 99'],['Freela','+R$ 850']])}`;
+    case 'ext': return `<p>Rotina automática</p><div class="prog"><i></i></div>${rws([['arquivo_0412.xml','ok'],['arquivo_0413.xml','ok'],['arquivo_0414.xml','ok'],['arquivo_0415.xml','…'],['arquivo_0416.xml','…']])}`;
+    case 'app': return `<p>Novembro</p>${chart()}${rws([['Aluguel','-R$ 900'],['Transporte','-R$ 180'],['Pix recebido','+R$ 250'],['Lazer','-R$ 120']])}`;
+    case 'wed': return `<p>Faltam</p><div class="count"><div>32<small>dias</small></div><div>08<small>horas</small></div><div>41<small>min</small></div><div>17<small>seg</small></div></div><span class="cta">Confirmar presença</span>${rws([['Cerimônia','16h'],['Recepção','18h']])}`;
+    case 'cup': return `<p>Rodada 3</p>${rws([['Time A','9 pts'],['Time B','7 pts'],['Time C','6 pts'],['Time D','4 pts'],['Time E','3 pts']])}<span class="cta">Ver jogos</span>`;
+    case 'car': return `<span class="cta">Falar com vendedor</span>${g3(it)}`;
+    default: return `<p>${esc(p.tipo || '')}</p><span class="cta">Fale conosco</span>${g3(it)}${rws([['Sobre','ver'],['Contato','ver']])}`;
+  }
+}
+function previa(p, i) {
+  const T = tema(p), pal = T.pal.slice(); if (/^#[0-9a-f]{6}$/i.test(p.cor || '')) pal[2] = p.cor;
+  const imgs = (p.imgs || []).filter(x => /^[\w-]+$/.test(x));
+  const head = `<div class="bar"><i></i><i></i><i></i><em>${esc((p.nome || '').toLowerCase().replace(/\s+/g, '-'))}</em></div>`;
+  if (imgs.length) return `<div class="pj-prev shots" aria-hidden="true">${head}${imgs.map((id, k) => `<img src="/api/img?id=${id}" alt="" loading="lazy"${k === 0 ? ' class="on"' : ''}>`).join('')}${imgs.length > 1 ? `<div class="sdots">${imgs.map((_, k) => `<i${k === 0 ? ' class="on"' : ''}></i>`).join('')}</div>` : ''}</div>`;
+  return `<div class="pj-prev" style="--pb:${pal[0]};--pi:${pal[1]};--pa:${pal[2]};--pc:${pal[3]};--d:${-i * 1.7}s${T.pf ? ';--pf:' + T.pf : ''}" aria-hidden="true">${head}
+    <div class="pg"><h4>${esc(p.tema === 'gen' || !T.h ? p.nome : T.h)}</h4>${corpo(p)}${corpo(p)}</div><span class="pj-cap">prévia ilustrativa</span></div>`;
+}
+let filtro = 'todos';
+function renderProjetos() {
+  const vis = PROJ.filter(p => p.visivel !== false);
+  const on = vis.filter(p => ANDAMENTO.includes(p.status)).length;
+  $('#pill-t').innerHTML = `<b>${vis.length} projetos</b> · ${on} em andamento`;
+  const F = [['todos','Todos',vis.length],['on','Em andamento',on],['done','Outros',vis.length - on]];
+  $('#tabs').innerHTML = F.map(t => `<button class="tab" type="button" data-f="${t[0]}" aria-pressed="${t[0] === filtro}">${t[1]}<span>${t[2]}</span></button>`).join('');
+  const lista = vis.filter(p => filtro === 'todos' || (filtro === 'on') === ANDAMENTO.includes(p.status));
+  $('#nt-proj').innerHTML = lista.map((p, i) => {
+    const and = ANDAMENTO.includes(p.status), gh = safeUrl(p.gh), site = safeUrl(p.site);
+    return `<article class="pj rv">${previa(p, i)}
+      <div class="pj-meta"><span class="st-tag${and ? '' : ' done'}">${and ? '<span class="dot"></span>' : ''}${esc(p.status)}</span><span>${esc(p.tipo)}</span></div>
+      <h3>${esc(p.nome)}</h3><p>${esc(p.desc)}</p>
+      <div class="pj-links">${site ? `<a href="${esc(site)}" target="_blank" rel="noopener">Ver site no ar →</a>` : ''}${gh ? `<a href="${esc(gh)}" target="_blank" rel="noopener">Ver no GitHub →</a>` : ''}${!site && !gh ? '<span>Projeto de cliente, código privado</span>' : ''}</div></article>`;
+  }).join('') || '<p class="vazio">Nenhum projeto nesta categoria ainda.</p>';
+  watch($$('#nt-proj .rv'));
+}
+function renderSite() {
+  const T = C.textos;
+  $$('[data-t]').forEach(el => { const v = T[el.dataset.t]; if (v != null) el.textContent = v; });
+  $$('[data-tel]').forEach(el => el.textContent = telFmt(T.whats));
+  $$('[data-wa]').forEach(a => { a.href = wa(); a.target = '_blank'; a.rel = 'noopener'; });
+  $('#nt-servicos').innerHTML = C.servicos.map(s => `<article class="svc">${ico(I[s.i] || I.site)}<h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><div class="svc-foot"><span class="price">${s.p ? 'a partir de <b>' + esc(s.p) + '</b>' : 'Sob orçamento'}</span>${s.pz ? `<span class="pz">Prazo: ${esc(s.pz)}</span>` : ''}</div></article>`).join('');
+  $('#nt-passos').innerHTML = C.passos.map((p, i) => `<li class="step"><span class="step-n" aria-hidden="true">${i + 1}</span><div><h3>${esc(p.t)}</h3><p>${esc(p.d)}</p></div></li>`).join('');
+  $('#nt-difs').innerHTML = C.difs.map(d => `<div class="dif">${ico(I[d.i] || I.star)}<div><h3>${esc(d.t)}</h3><p>${esc(d.d)}</p></div></div>`).join('');
+  const tipos = $('#tipo-chips'); if (tipos) tipos.innerHTML = [...C.servicos.map(s => s.t), 'Ainda não sei'].map(v => `<label class="chip"><input type="radio" name="tipo" value="${esc(v)}"><span>${esc(v)}</span></label>`).join('');
+  renderProjetos();
+}
+$('#tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) { filtro = b.dataset.f; renderProjetos(); } });
+/* carrossel de prints */
+setInterval(() => { $$('.pj-prev.shots').forEach(box => { const im = $$('img', box); if (im.length < 2 || box.matches(':hover')) return; const k = im.findIndex(x => x.classList.contains('on')); const n = (k + 1) % im.length; im[k].classList.remove('on'); im[n].classList.add('on'); const d = $$('.sdots i', box); d[k]?.classList.remove('on'); d[n]?.classList.add('on'); }); }, 3200);
+/* revelar ao rolar */
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(x => { if (x.isIntersecting) { x.target.classList.add('in'); io.unobserve(x.target); } }), {rootMargin:'0px 0px -8% 0px'}) : null;
+function watch(els) { els.forEach((el, i) => { el.style.transitionDelay = (i % 2) * 90 + 'ms'; io ? io.observe(el) : el.classList.add('in'); }); }
+
+/* menu celular, selo, botão flutuante, crédito */
+const mb = $('.menu-btn'), nav = $('.nav-links');
+mb.addEventListener('click', () => { const o = nav.classList.toggle('open'); mb.setAttribute('aria-expanded', o); });
+$$('a', nav).forEach(a => a.addEventListener('click', () => { nav.classList.remove('open'); mb.setAttribute('aria-expanded', false); }));
+$$('[data-gh]').forEach(a => { a.href = GH; a.target = '_blank'; a.rel = 'noopener'; });
+$('#nt-credito').innerHTML = `© ${new Date().getFullYear()} NT Labs · Desenvolvido por <a href="${GH}" target="_blank" rel="noopener">Bruno Freitas</a>`;
+document.body.insertAdjacentHTML('beforeend', `<a class="nt-float" data-wa aria-label="Falar no WhatsApp">${ico(I.wa)}</a>`);
+
+/* ---------- formulário de orçamento ---------- */
+const SEG = ['Comércio ou loja','Alimentação','Saúde e beleza','Prestação de serviços','Imobiliária','Educação','Indústria','Outro'];
+const REC = ['Botão de WhatsApp','Catálogo de produtos','Pagamento online','Agendamento','Galeria de fotos','Blog ou notícias','Mapa e horários','Área administrativa'];
+const ESTILOS = [['Minimalista claro',['#ffffff','#e9ebef','#16181d']],['Escuro premium',['#101216','#2a2e36','#e3261c']],['Colorido e vibrante',['#ffcf33','#1fb5a8','#ff5a3c']],['Clássico elegante',['#f3efe7','#c9b99a','#2b2b2b']],['Ainda não sei',['#d9dce1','#b9bec7','#9aa0aa']]];
+const chips = (n, a, t) => a.map(v => `<label class="chip"><input type="${t}" name="${n}" value="${esc(v)}"><span>${esc(v)}</span></label>`).join('');
+$('#nt-form').innerHTML = `<form id="f-pedido" novalidate>
+  <div class="f-grid">
+    <label class="fld"><span>Seu nome *</span><input name="nome" autocomplete="name"></label>
+    <label class="fld"><span>WhatsApp *</span><input name="whats" type="tel" inputmode="tel" autocomplete="tel" placeholder="(61) 90000-0000"></label>
+    <label class="fld"><span>Nome do negócio *</span><input name="negocio"></label>
+    <label class="fld"><span>Segmento</span><select name="segmento"><option value="">Escolha</option>${SEG.map(s => `<option>${s}</option>`).join('')}</select></label>
+  </div>
+  <fieldset><legend>Que tipo de site você precisa?</legend><div class="chips" id="tipo-chips"></div></fieldset>
+  <fieldset><legend>Qual estilo combina com você?</legend><div class="estilos">${ESTILOS.map(([v, c]) => `<label class="est"><input type="radio" name="estilo" value="${v}"><span class="est-prev" style="--a:${c[0]};--b:${c[1]};--c:${c[2]}"><i></i><i></i><i></i></span><span class="est-n">${v}</span></label>`).join('')}</div></fieldset>
+  <fieldset><legend>O que o site precisa ter?</legend><div class="chips">${chips('recursos', REC, 'checkbox')}</div></fieldset>
+  <div class="f-grid">
+    <fieldset><legend>Já tem logo?</legend><div class="chips">${chips('logo', ['Sim','Não','Quero criar'], 'radio')}</div></fieldset>
+    <fieldset><legend>Já tem domínio (.com.br)?</legend><div class="chips">${chips('dominio', ['Sim','Não','Não sei'], 'radio')}</div></fieldset>
+    <fieldset><legend>Quanto pretende investir?</legend><div class="chips">${chips('orcamento', ['Até R$ 1.000','R$ 1.000 a 2.500','R$ 2.500 a 5.000','Acima de R$ 5.000'], 'radio')}</div></fieldset>
+    <fieldset><legend>Para quando?</legend><div class="chips">${chips('prazo', ['Urgente (até 2 semanas)','Em até 1 mês','Sem pressa'], 'radio')}</div></fieldset>
+  </div>
+  <label class="fld"><span>Sites que você gosta (opcional)</span><input name="refs" placeholder="Cole links ou nomes"></label>
+  <label class="fld"><span>Conte um pouco do que imagina</span><textarea name="msg" rows="4"></textarea></label>
+  <p class="f-err" role="alert" hidden></p>
+  <button class="btn btn-main" type="submit">Enviar pedido de orçamento</button>
+  <p class="f-note">Respondemos pelo WhatsApp.</p>
+</form>
+<div class="f-ok" hidden><h3>Pedido recebido!</h3><p>Para agilizar, envie também o resumo pelo WhatsApp: <span data-tel></span>.</p>
+  <a class="btn btn-main" id="f-wa" target="_blank" rel="noopener">${ico(I.wa)} Enviar resumo no WhatsApp</a>
+  <button class="btn btn-ghost" type="button" id="f-novo">Preencher outro</button></div>`;
+const form = $('#f-pedido'), ok = $('.f-ok');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const fd = new FormData(form), g = (k) => (fd.get(k) || '').toString().trim();
+  const p = {nome:g('nome'), whats:g('whats'), negocio:g('negocio'), segmento:g('segmento'), tipo:g('tipo'), estilo:g('estilo'), recursos:fd.getAll('recursos'), logo:g('logo'), dominio:g('dominio'), orcamento:g('orcamento'), prazo:g('prazo'), refs:g('refs'), msg:g('msg').slice(0, 2000), status:'novo', t:Date.now()};
+  const err = $('.f-err', form);
+  const falta = [!p.nome && 'seu nome', p.whats.replace(/\D/g, '').length < 10 && 'um WhatsApp com DDD', !p.negocio && 'o nome do negócio'].filter(Boolean);
+  if (falta.length) { err.textContent = 'Falta preencher: ' + falta.join(', ') + '.'; err.hidden = false; return; }
+  err.hidden = true;
+  const b = $('button[type=submit]', form); b.disabled = true; b.textContent = 'Enviando…';
+  await gravar('pedidos', {...p, src:'novo'});
+  b.disabled = false; b.textContent = 'Enviar pedido de orçamento';
+  $('#f-wa').href = wa(`Olá! Sou ${p.nome}, do(a) ${p.negocio}${p.segmento ? ' (' + p.segmento + ')' : ''}.\nQuero: ${p.tipo || 'um site'}${p.estilo ? ' · estilo ' + p.estilo : ''}.\n${p.recursos.length ? 'Precisa ter: ' + p.recursos.join(', ') + '.\n' : ''}${p.orcamento ? 'Investimento: ' + p.orcamento + '. ' : ''}${p.prazo ? 'Prazo: ' + p.prazo + '.' : ''}${p.msg ? '\n' + p.msg : ''}`);
+  form.hidden = true; ok.hidden = false; ok.scrollIntoView({behavior:'smooth', block:'center'});
+});
+$('#f-novo').addEventListener('click', () => { form.reset(); ok.hidden = true; form.hidden = false; });
+
+/* visita: uma por sessão */
+const hoje = (d = new Date()) => d.toLocaleDateString('sv-SE');
+(async () => {
+  if (location.hash === '#painel') return;
+  try { if (sessionStorage.getItem(LK + 'v')) return; sessionStorage.setItem(LK + 'v', '1'); } catch {}
+  if (S.owner) return; /* não conta as suas próprias visitas */
+  gravar('visitas', {t:Date.now(), dia:hoje(), cel:matchMedia('(max-width:700px)').matches, origem:document.referrer ? 'link' : 'direto', src:'novo'});
+})();
+
+/* carga inicial */
+renderSite(); watch($$('.wrap.rv, .proj-head.rv'));
+(async () => { C = juntar(await lerConteudo()); PROJ = await projetosSite(); renderSite(); })();
+
+/* =====================================================================
+   PAINEL DE GESTÃO
+   ===================================================================== */
+document.body.insertAdjacentHTML('beforeend', `<section id="painel" class="painel" hidden aria-label="Painel de gestão"><div class="pn-wrap">
+  <header class="pn-top"><div><h1>Painel NT Labs</h1><p class="pn-mode"></p></div><a class="btn btn-ghost btn-sm" href="#inicio">Voltar ao site</a></header>
+  <nav class="pn-tabs scroll" id="pn-tabs"></nav>
+  <div class="pn-body" id="pn-body"><p class="pn-load">Carregando dados…</p></div></div>
+  <div class="ed" id="ed" hidden><div class="ed-box" role="dialog" aria-modal="true" aria-labelledby="ed-t"><header><h2 id="ed-t"></h2><button class="btn btn-ghost btn-sm" type="button" data-x>Fechar</button></header><form id="ed-f" novalidate></form></div></div></section>`);
+const pn = $('#painel'), main = $('#site'), body = $('#pn-body');
+const ABAS = [['resumo','Resumo'],['pedidos','Pedidos'],['clientes','Clientes e sistemas'],['projetos','Projetos'],['servicos','Serviços e etapas'],['textos','Textos do site'],['ajustes','Backup']];
+let aba = 'resumo', D = {pedidos:[], visitas:[], clientes:[], projetos:[]}, busca = '', fPed = 'todos';
+const fmt = (t) => t ? new Date(t).toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'}) : '';
+const dataBR = (s) => s ? s.split('-').reverse().join('/') : '';
+const brl = (n) => (Number(n) || 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+const aviso = (msg) => { let t = $('#pn-toast'); if (!t) { pn.insertAdjacentHTML('beforeend', '<div id="pn-toast" class="toast" role="status"></div>'); t = $('#pn-toast'); } t.textContent = msg; t.classList.add('on'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('on'), 2600); };
+const onde = () => 'publicado no site';
+
+/* editor genérico */
+const CAMPOS = {
+  clientes: [
+    {k:'nome', l:'Nome do cliente *', req:1}, {k:'negocio', l:'Empresa / negócio'}, {k:'whats', l:'WhatsApp', type:'tel'},
+    {k:'sistema', l:'Sistema / serviço contratado *', req:1}, {k:'status', l:'Status', opts:CST},
+    {k:'valor', l:'Valor do projeto (R$)', type:'number'}, {k:'mensal', l:'Mensalidade (R$)', type:'number'},
+    {k:'inicio', l:'Início', type:'date'}, {k:'entrega', l:'Entrega prevista', type:'date'},
+    {k:'link', l:'Link do sistema (https://)', type:'url'}, {k:'painel', l:'Link do painel do cliente (https://)', type:'url'},
+    {k:'obs', l:'Anotações', area:1, full:1}
+  ],
+  projetos: [
+    {k:'nome', l:'Nome do projeto *', req:1}, {k:'tipo', l:'Tipo (ex.: Site institucional)'}, {k:'status', l:'Status', opts:PST},
+    {k:'ordem', l:'Ordem no site (1 aparece primeiro)', type:'number'}, {k:'desc', l:'Descrição curta', area:1, full:1},
+    {k:'site', l:'Link do site no ar (https://)', type:'url'}, {k:'gh', l:'Link do GitHub (https://)', type:'url'},
+    {k:'tema', l:'Estilo da prévia animada', opts:Object.keys(TEMAS), lab:(k) => TEMAS[k].n}, {k:'cor', l:'Cor de destaque da prévia', type:'color'},
+    {k:'cliente', l:'Cliente vinculado', opts:() => ['', ...D.clientes.map(c => c.id)], lab:(id) => id ? (D.clientes.find(c => c.id === id)?.nome || '—') : 'Nenhum'},
+    {k:'visivel', l:'Mostrar no site', type:'check'}, {k:'imgs', l:'Prints do projeto (substituem a prévia animada)', type:'imgs', full:1}
+  ]
+};
+let edCtx = null;
+function editar(col, item, titulo) {
+  const it = item ? {...item} : {src:'novo', ...(col === 'projetos' ? {visivel:true, tema:'gen', status:'Em desenvolvimento', ordem:(D.projetos.length + 1), imgs:[]} : {status:'Proposta'})};
+  edCtx = {col, it};
+  $('#ed-t').textContent = titulo || (item ? 'Editar' : 'Novo');
+  $('#ed-f').innerHTML = `<div class="f-grid">${CAMPOS[col].map(c => {
+    const v = it[c.k] ?? '';
+    if (c.type === 'check') return `<label class="ck"><input type="checkbox" name="${c.k}"${v ? ' checked' : ''}><span>${c.l}</span></label>`;
+    if (c.type === 'imgs') return `<div class="fld full"><span>${c.l}</span>${S.assets ? `<div class="thumbs" id="thumbs"></div><label class="btn btn-ghost btn-sm up">Enviar imagens<input type="file" accept="image/*" multiple id="up"></label><small class="hint">Dica: prints na proporção 16:10 ficam melhores.</small>` : '<small class="hint">Envio de imagens disponível quando você abre o link do site estando logado.</small>'}</div>`;
+    if (c.opts) { const o = typeof c.opts === 'function' ? c.opts() : c.opts; return `<label class="fld${c.full ? ' full' : ''}"><span>${c.l}</span><select name="${c.k}">${o.map(x => `<option value="${esc(x)}"${x === v ? ' selected' : ''}>${esc(c.lab ? c.lab(x) : x)}</option>`).join('')}</select></label>`; }
+    if (c.area) return `<label class="fld full"><span>${c.l}</span><textarea name="${c.k}" rows="3">${esc(v)}</textarea></label>`;
+    return `<label class="fld${c.full ? ' full' : ''}"><span>${c.l}</span><input name="${c.k}" type="${c.type || 'text'}" value="${esc(c.type === 'color' && !v ? '#e3261c' : v)}"${c.type === 'number' ? ' step="any" min="0"' : ''}></label>`;
+  }).join('')}</div><p class="f-err" hidden></p><div class="ed-act"><button class="btn btn-main" type="submit">Salvar</button>${item ? '<button class="btn btn-ghost" type="button" data-del>Excluir</button>' : ''}</div>`;
+  if ($('#thumbs')) drawThumbs();
+  const up = $('#up'); if (up) up.onchange = async () => {
+    for (const f of up.files) { try { aviso('Enviando ' + f.name + '…'); const r = await S.assets.upload(f); it.imgs = [...(it.imgs || []), r.id]; drawThumbs(); } catch { aviso('Não foi possível enviar ' + f.name); } }
+    up.value = '';
+  };
+  $('#ed').hidden = false; $('#ed-f input, #ed-f select')?.focus();
+}
+function drawThumbs() {
+  const it = edCtx.it; $('#thumbs').innerHTML = (it.imgs || []).map((id, k) => `<figure><img src="/api/img?id=${esc(id)}" alt=""><button type="button" class="tx" data-k="${k}" aria-label="Remover imagem">×</button></figure>`).join('') || '<small class="hint">Nenhum print ainda: o site mostra a prévia animada.</small>';
+  $$('#thumbs .tx').forEach(b => b.onclick = () => { it.imgs.splice(+b.dataset.k, 1); drawThumbs(); });
+}
+$('#ed').addEventListener('click', async (e) => {
+  if (e.target.id === 'ed' || e.target.closest('[data-x]')) { $('#ed').hidden = true; return; }
+  const del = e.target.closest('[data-del]');
+  if (del) {
+    if (!del.dataset.c) { del.dataset.c = 1; del.textContent = 'Confirmar exclusão'; return; }
+    try { await apagar(edCtx.col, edCtx.it); } catch {}
+    $('#ed').hidden = true; await recarregar(); aviso('Excluído');
+  }
+});
+$('#ed-f').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const {col, it} = edCtx, f = e.target, err = $('.f-err', f);
+  for (const c of CAMPOS[col]) {
+    if (c.type === 'imgs') continue;
+    const el = f.elements[c.k]; if (!el) continue;
+    it[c.k] = c.type === 'check' ? el.checked : c.type === 'number' ? (el.value === '' ? '' : Number(el.value)) : el.value.trim();
+  }
+  const falta = CAMPOS[col].filter(c => c.req && !it[c.k]).map(c => c.l.replace(' *', ''));
+  const urlRuim = CAMPOS[col].filter(c => c.type === 'url' && it[c.k] && !safeUrl(it[c.k])).map(c => c.l);
+  if (falta.length || urlRuim.length) { err.textContent = falta.length ? 'Preencha: ' + falta.join(', ') + '.' : 'Links precisam começar com https://'; err.hidden = false; return; }
+  if (!it.t) it.t = Date.now(); it.atualizado = Date.now();
+  if (col === 'projetos' && D.projetos.some(p => p.src === 'padrao')) { await assumirPadrao(); }
+  await gravar(col, it); $('#ed').hidden = true; await recarregar(); aviso('Salvo (' + onde() + ')');
+});
+addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#ed').hidden) $('#ed').hidden = true; });
+
+/* abas */
+function abas() { $('#pn-tabs').innerHTML = ABAS.map(([k, l]) => `<a href="#painel" data-a="${k}" class="pt${k === aba ? ' on' : ''}"${k === aba ? ' aria-current="page"' : ''}>${l}${k === 'pedidos' && D.pedidos.some(p => p.status === 'novo') ? ` <b>${D.pedidos.filter(p => p.status === 'novo').length}</b>` : ''}</a>`).join(''); }
+$('#pn-tabs').addEventListener('click', e => { const a = e.target.closest('[data-a]'); if (!a) return; e.preventDefault(); aba = a.dataset.a; busca = ''; desenhar(); });
+function desenhar() {
+  abas();
+  if (!S.owner) { telaLogin(); return; }
+  $('.pn-mode', pn).textContent = 'Tudo que você salvar aqui aparece no site na hora.';
+  ({resumo, pedidos, clientes, projetos, servicos, textos, ajustes})[aba]();
+}
+const card = (h, inner, extra = '') => `<div class="pn-card"><div class="pn-head"><h2>${h}</h2>${extra}</div>${inner}</div>`;
+
+function resumo() {
+  const V = D.visitas, dH = hoje(), dias = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - 6 + i); return hoje(d); });
+  const pd = dias.map(d => V.filter(v => v.dia === d).length), mx = Math.max(1, ...pd);
+  const ativos = D.clientes.filter(c => !['Encerrado','Pausado'].includes(c.status));
+  const mrr = D.clientes.filter(c => ['No ar','Manutenção'].includes(c.status)).reduce((s, c) => s + (Number(c.mensal) || 0), 0);
+  const emAnd = D.clientes.filter(c => ['Em desenvolvimento','Homologação'].includes(c.status));
+  const proxEnt = emAnd.filter(c => c.entrega).sort((a, b) => a.entrega.localeCompare(b.entrega)).slice(0, 4);
+  body.innerHTML = `<div class="pn-stats">
+    <div class="st"><span>Visitas hoje</span><b>${V.filter(v => v.dia === dH).length}</b><small>${V.length} no total</small></div>
+    <div class="st"><span>Pedidos novos</span><b>${D.pedidos.filter(p => p.status === 'novo').length}</b><small>${D.pedidos.length} recebidos</small></div>
+    <div class="st"><span>Clientes ativos</span><b>${ativos.length}</b><small>${emAnd.length} sistemas em andamento</small></div>
+    <div class="st"><span>Receita mensal</span><b class="money">${brl(mrr)}</b><small>mensalidades no ar</small></div></div>
+  <div class="pn-2">
+  ${card('Visitas nos últimos 7 dias', `<p class="pn-sub">Suas próprias visitas não entram na conta.</p><div class="bars">${dias.map((d, i) => `<div class="bar"><span class="bar-v">${pd[i]}</span><span class="bar-f" style="height:${Math.max(3, pd[i] / mx * 100)}%"></span><span class="bar-d">${d.slice(8)}/${d.slice(5, 7)}</span></div>`).join('')}</div>`)}
+  ${card('Próximas entregas', proxEnt.length ? `<ul class="mini">${proxEnt.map(c => `<li><div><b>${esc(c.nome)}</b><span>${esc(c.sistema)}</span></div><time>${dataBR(c.entrega)}</time></li>`).join('')}</ul>` : '<p class="pn-sub">Nenhuma entrega com data. Cadastre em Clientes e sistemas.</p>', '<a href="#painel" class="lk" data-go="clientes">Ver clientes</a>')}
+  </div>
+  ${card('Últimos pedidos', D.pedidos.slice(0, 4).map(p => `<div class="row"><div><b>${esc(p.nome)}</b><span>${esc(p.negocio)} · ${esc(p.tipo || 'tipo não informado')}</span></div><span class="tag t-${esc(p.status).replace(/\s/g, '')}">${esc(p.status)}</span></div>`).join('') || '<p class="pn-sub">Nenhum pedido ainda.</p>', '<a href="#painel" class="lk" data-go="pedidos">Ver todos</a>')}`;
+  $$('[data-go]', body).forEach(a => a.onclick = (e) => { e.preventDefault(); aba = a.dataset.go; desenhar(); });
+}
+
+function pedidos() {
+  const PS = ['novo','em contato','proposta enviada','fechado','perdido'];
+  const lista = D.pedidos.filter(p => (fPed === 'todos' || p.status === fPed) && (!busca || (p.nome + ' ' + p.negocio + ' ' + (p.segmento || '')).toLowerCase().includes(busca)));
+  body.innerHTML = card('Pedidos de orçamento', `<div class="pn-tools"><input id="pn-busca" type="search" placeholder="Buscar por nome ou negócio" value="${esc(busca)}"><select id="pn-f"><option value="todos">Todos os status</option>${PS.map(s => `<option${s === fPed ? ' selected' : ''}>${s}</option>`).join('')}</select></div>
+  ${lista.map(p => `<article class="ped" data-id="${esc(p.id)}"><div class="ped-top"><div><h3>${esc(p.nome)}</h3><p>${esc(p.negocio)}${p.segmento ? ' · ' + esc(p.segmento) : ''}</p></div><time>${fmt(p.t)}</time></div>
+    <dl>${[['WhatsApp', p.whats], ['Tipo', p.tipo], ['Estilo', p.estilo], ['Recursos', (p.recursos || []).join(', ')], ['Investimento', p.orcamento], ['Prazo', p.prazo], ['Logo', p.logo], ['Domínio', p.dominio], ['Referências', p.refs], ['Mensagem', p.msg]].filter(x => x[1]).map(x => `<div><dt>${x[0]}</dt><dd>${esc(x[1])}</dd></div>`).join('')}</dl>
+    <div class="ped-act"><select class="ped-st" aria-label="Status">${PS.map(s => `<option${s === p.status ? ' selected' : ''}>${s}</option>`).join('')}</select>
+    <a class="btn btn-main btn-sm" target="_blank" rel="noopener" href="https://wa.me/55${esc(String(p.whats).replace(/\D/g, '').replace(/^55/, ''))}">${ico(I.wa)} WhatsApp</a>
+    <button class="btn btn-ghost btn-sm" type="button" data-conv>Virar cliente</button><button class="btn btn-ghost btn-sm" type="button" data-del>Excluir</button></div></article>`).join('') || `<div class="pn-empty"><p>${D.pedidos.length ? 'Nenhum pedido com esse filtro.' : 'Nenhum pedido ainda. Quando alguém preencher o formulário do site, ele aparece aqui.'}</p></div>`}`,
+  '<button class="btn btn-ghost btn-sm" id="pn-csv" type="button">Copiar planilha (CSV)</button>');
+  $('#pn-f').onchange = e => { fPed = e.target.value; pedidos(); };
+  $('#pn-busca').oninput = e => { busca = e.target.value.toLowerCase(); clearTimeout(window.__b); window.__b = setTimeout(() => { pedidos(); const i = $('#pn-busca'); i.focus(); i.setSelectionRange(99, 99); }, 300); };
+  $('#pn-csv').onclick = async (e) => {
+    const cols = ['t','nome','whats','negocio','segmento','tipo','estilo','recursos','orcamento','prazo','logo','dominio','refs','msg','status'];
+    const csv = [cols.join(';')].concat(D.pedidos.map(p => cols.map(c => '"' + String(c === 't' ? fmt(p.t) : Array.isArray(p[c]) ? p[c].join(', ') : p[c] ?? '').replace(/"/g, '""') + '"').join(';'))).join('\n');
+    try { await navigator.clipboard.writeText(csv); e.target.textContent = 'Copiado! Cole no Excel'; } catch { e.target.textContent = 'Não foi possível copiar'; }
+  };
+  $$('.ped', body).forEach(el => {
+    const it = D.pedidos.find(p => String(p.id) === el.dataset.id);
+    $('.ped-st', el).onchange = async (e) => { it.status = e.target.value; await gravar('pedidos', it); abas(); aviso('Status atualizado'); };
+    $('[data-conv]', el).onclick = () => { editar('clientes', null, 'Novo cliente a partir do pedido'); preencher({nome:it.nome, negocio:it.negocio, whats:it.whats, sistema:it.tipo, obs:[(it.recursos || []).join(', '), it.msg].filter(Boolean).join('\n')}); };
+    const d = $('[data-del]', el); d.onclick = async () => { if (!d.dataset.c) { d.dataset.c = 1; d.textContent = 'Confirmar exclusão'; return; } await apagar('pedidos', it); await recarregar(); aviso('Pedido excluído'); };
+  });
+}
+function preencher(v) { const f = $('#ed-f'); Object.entries(v).forEach(([k, x]) => { if (f.elements[k] && x) f.elements[k].value = x; }); }
+
+function clientes() {
+  const lista = D.clientes.filter(c => !busca || (c.nome + ' ' + (c.negocio || '') + ' ' + c.sistema).toLowerCase().includes(busca)).sort((a, b) => CST.indexOf(a.status) - CST.indexOf(b.status));
+  const total = D.clientes.filter(c => !['Encerrado'].includes(c.status)).reduce((s, c) => s + (Number(c.valor) || 0), 0);
+  body.innerHTML = card('Clientes e sistemas', `<p class="pn-sub">Só você vê esta área. Valor em projetos ativos: <b>${brl(total)}</b>.</p>
+  <div class="pn-tools one"><input id="pn-busca" type="search" placeholder="Buscar cliente ou sistema" value="${esc(busca)}"></div>
+  ${lista.map(c => { const lk = safeUrl(c.link), pnl = safeUrl(c.painel), pj = D.projetos.find(p => p.cliente === c.id);
+    return `<article class="cli" data-id="${esc(c.id)}"><div class="ped-top"><div><h3>${esc(c.nome)}${c.negocio ? ' <small>· ' + esc(c.negocio) + '</small>' : ''}</h3><p>${esc(c.sistema)}</p></div><span class="tag t-${esc(c.status).replace(/\s/g, '')}">${esc(c.status)}</span></div>
+    <dl>${[['Valor', c.valor ? brl(c.valor) : ''], ['Mensalidade', c.mensal ? brl(c.mensal) + '/mês' : ''], ['Início', dataBR(c.inicio)], ['Entrega', dataBR(c.entrega)], ['No portfólio', pj ? pj.nome : ''], ['Anotações', c.obs]].filter(x => x[1]).map(x => `<div><dt>${x[0]}</dt><dd>${esc(x[1])}</dd></div>`).join('')}</dl>
+    <div class="ped-act"><button class="btn btn-main btn-sm" type="button" data-ed>Editar</button>${c.whats ? `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="https://wa.me/55${esc(String(c.whats).replace(/\D/g, '').replace(/^55/, ''))}">WhatsApp</a>` : ''}${lk ? `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="${esc(lk)}">Abrir sistema</a>` : ''}${pnl ? `<a class="btn btn-ghost btn-sm" target="_blank" rel="noopener" href="${esc(pnl)}">Painel do cliente</a>` : ''}${pj ? '' : '<button class="btn btn-ghost btn-sm" type="button" data-pj>Mostrar no portfólio</button>'}</div></article>`; }).join('') || '<div class="pn-empty"><p>Nenhum cliente cadastrado ainda.</p></div>'}`,
+  '<button class="btn btn-main btn-sm" type="button" id="novo">Novo cliente</button>');
+  $('#novo').onclick = () => editar('clientes', null, 'Novo cliente');
+  $('#pn-busca').oninput = e => { busca = e.target.value.toLowerCase(); clearTimeout(window.__b); window.__b = setTimeout(() => { clientes(); const i = $('#pn-busca'); i.focus(); i.setSelectionRange(99, 99); }, 300); };
+  $$('.cli', body).forEach(el => {
+    const c = D.clientes.find(x => String(x.id) === el.dataset.id);
+    $('[data-ed]', el).onclick = () => editar('clientes', c, 'Editar cliente');
+    const b = $('[data-pj]', el); if (b) b.onclick = () => { editar('projetos', null, 'Novo projeto no portfólio'); preencher({nome:c.sistema, tipo:'', status:['No ar','Manutenção','Encerrado'].includes(c.status) ? 'Entregue' : 'Em desenvolvimento', site:c.link || ''}); $('#ed-f').elements.cliente.value = c.id; };
+  });
+}
+
+function projetos() {
+  const lista = D.projetos.slice().sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
+  const padrao = lista.length && lista.every(p => p.src === 'padrao');
+  body.innerHTML = card('Projetos do site', `${padrao ? `<div class="note">Estes são os projetos de exemplo. Ao editar qualquer um, todos passam a ser seus e ficam salvos.</div>` : ''}<p class="pn-sub">Arraste a ordem com as setas. Projetos ocultos não aparecem no site.</p>
+  ${lista.map((p, k) => `<article class="prj" data-id="${esc(p.id)}"><div class="prj-th">${(p.imgs || []).length ? `<img src="/api/img?id=${esc(p.imgs[0])}" alt="">` : `<span style="--c:${esc(/^#[0-9a-f]{6}$/i.test(p.cor || '') ? p.cor : tema(p).pal[2])}"></span>`}</div>
+    <div class="prj-i"><h3>${esc(p.nome)}${p.visivel === false ? ' <small>(oculto)</small>' : ''}</h3><p><span class="tag t-${esc(p.status).replace(/\s/g, '')}">${esc(p.status)}</span> ${esc(p.tipo || '')}</p></div>
+    <div class="prj-a"><button class="ib" type="button" data-up aria-label="Subir"${k === 0 ? ' disabled' : ''}>↑</button><button class="ib" type="button" data-dn aria-label="Descer"${k === lista.length - 1 ? ' disabled' : ''}>↓</button><button class="btn btn-ghost btn-sm" type="button" data-ed>Editar</button></div></article>`).join('')}`,
+  '<button class="btn btn-main btn-sm" type="button" id="novo">Novo projeto</button>');
+  $('#novo').onclick = async () => { if (padrao) await assumirPadrao(); editar('projetos', null, 'Novo projeto'); };
+  $$('.prj', body).forEach(el => {
+    const p = lista.find(x => String(x.id) === el.dataset.id), k = lista.indexOf(p);
+    $('[data-ed]', el).onclick = async () => { if (padrao) { await assumirPadrao(); } editar('projetos', D.projetos.find(x => x.id === p.id) || p, 'Editar projeto'); };
+    const mover = async (dir) => { if (padrao) await assumirPadrao(); const L = D.projetos.slice().sort((a, b) => (a.ordem || 0) - (b.ordem || 0)); const o = L[k + dir]; if (!o) return; const a = L[k]; [a.ordem, o.ordem] = [k + dir + 1, k + 1]; await gravar('projetos', a); await gravar('projetos', o); await recarregar(); };
+    $('[data-up]', el).onclick = () => mover(-1); $('[data-dn]', el).onclick = () => mover(1);
+  });
+}
+async function assumirPadrao() { for (const p of D.projetos.filter(x => x.src === 'padrao')) await gravar('projetos', p); D.projetos = await listar('projetos'); }
+
+let rascunho = null;
+function servicos() {
+  rascunho = rascunho || JSON.parse(JSON.stringify({servicos:C.servicos, passos:C.passos, difs:C.difs}));
+  const R = rascunho, opIco = (v) => Object.entries(ICONES).map(([k, n]) => `<option value="${k}"${k === v ? ' selected' : ''}>${n}</option>`).join('');
+  const bloco = (key, titulo, campos, novo) => card(titulo, `<div class="rep" data-key="${key}">${R[key].map((x, i) => `<div class="rep-i" data-i="${i}"><div class="f-grid">${campos.map(c => c.k === 'i' ? `<label class="fld"><span>Ícone</span><select data-k="i">${opIco(x.i)}</select></label>` : c.area ? `<label class="fld full"><span>${c.l}</span><textarea data-k="${c.k}" rows="2">${esc(x[c.k] || '')}</textarea></label>` : `<label class="fld"><span>${c.l}</span><input data-k="${c.k}" value="${esc(x[c.k] || '')}"></label>`).join('')}</div>
+    <div class="rep-a"><button class="ib" type="button" data-mv="-1" aria-label="Subir"${i === 0 ? ' disabled' : ''}>↑</button><button class="ib" type="button" data-mv="1" aria-label="Descer"${i === R[key].length - 1 ? ' disabled' : ''}>↓</button><button class="btn btn-ghost btn-sm" type="button" data-rm>Remover</button></div></div>`).join('')}
+    <button class="btn btn-ghost btn-sm" type="button" data-add='${JSON.stringify(novo)}'>Adicionar</button></div>`);
+  body.innerHTML = `<div class="savebar"><span>Mudanças só valem depois de salvar.</span><button class="btn btn-main btn-sm" id="salvar" type="button">Salvar no site</button></div>
+  ${bloco('servicos', 'Serviços e preços', [{k:'t', l:'Nome'}, {k:'i'}, {k:'p', l:'Preço de partida (vazio = sob orçamento)'}, {k:'pz', l:'Prazo'}, {k:'d', l:'Descrição', area:1}], {t:'Novo serviço', i:'site', d:'', p:'', pz:''})}
+  ${bloco('passos', 'Etapas do processo', [{k:'t', l:'Etapa'}, {k:'d', l:'Descrição', area:1}], {t:'Nova etapa', d:''})}
+  ${bloco('difs', 'Diferenciais', [{k:'t', l:'Título'}, {k:'i'}, {k:'d', l:'Descrição', area:1}], {t:'Novo diferencial', i:'star', d:''})}`;
+  body.oninput = body.onchange = (e) => { const el = e.target.closest('[data-k]'); if (!el) return; const r = el.closest('.rep'), i = +el.closest('.rep-i').dataset.i; R[r.dataset.key][i][el.dataset.k] = el.value; };
+  body.onclick = async (e) => {
+    const r = e.target.closest('.rep'); if (e.target.id === 'salvar') { C = {...C, ...R}; await salvarConteudo(limparC()); rascunho = null; renderSite(); aviso('Salvo (' + onde() + ')'); return; }
+    if (!r) return; const L = R[r.dataset.key];
+    if (e.target.dataset.add) { L.push(JSON.parse(e.target.dataset.add)); servicos(); return; }
+    const it = e.target.closest('.rep-i'); if (!it) return; const i = +it.dataset.i;
+    if (e.target.closest('[data-rm]')) { L.splice(i, 1); servicos(); }
+    const mv = e.target.closest('[data-mv]'); if (mv) { const j = i + +mv.dataset.mv; [L[i], L[j]] = [L[j], L[i]]; servicos(); }
+  };
+}
+const limparC = () => ({textos:C.textos, servicos:C.servicos, passos:C.passos, difs:C.difs, atualizado:Date.now()});
+
+const TXL = [
+  ['Topo do site', [['hero_titulo','Título principal',1],['hero_texto','Texto de apresentação',1],['hero_botao','Texto do botão']]],
+  ['Seção de projetos', [['proj_titulo','Título'],['proj_texto','Texto',1]]],
+  ['Seção de serviços', [['serv_titulo','Título'],['serv_texto','Texto',1],['serv_manut','Linha de manutenção',1]]],
+  ['Seção de processo', [['proc_titulo','Título'],['proc_texto','Texto',1]]],
+  ['Seção de orçamento', [['orc_titulo','Título'],['orc_texto','Texto',1]]],
+  ['Contato', [['whats','WhatsApp com DDI e DDD (só números)'],['whats_msg','Mensagem pronta do WhatsApp',1]]]
+];
+function textos() {
+  body.innerHTML = `<form id="tx-f" novalidate>${TXL.map(([g, cs]) => card(g, `<div class="f-grid">${cs.map(([k, l, a]) => a ? `<label class="fld full"><span>${l}</span><textarea name="${k}" rows="${k === 'hero_titulo' ? 2 : 3}">${esc(C.textos[k])}</textarea></label>` : `<label class="fld"><span>${l}</span><input name="${k}" value="${esc(C.textos[k])}"${k === 'whats' ? ' inputmode="numeric"' : ''}></label>`).join('')}</div>`)).join('')}
+  <div class="savebar"><button class="btn btn-ghost btn-sm" type="button" id="tx-reset">Voltar textos originais</button><button class="btn btn-main" type="submit">Salvar textos</button></div></form>`;
+  $('#tx-f').onsubmit = async (e) => {
+    e.preventDefault(); const f = e.target, t = {...C.textos};
+    TXL.forEach(([, cs]) => cs.forEach(([k]) => { t[k] = f.elements[k].value.trim() || PADRAO.textos[k]; }));
+    if (String(t.whats).replace(/\D/g, '').length < 12) { aviso('WhatsApp precisa ter DDI + DDD + número, ex.: 5561984515281'); return; }
+    C.textos = t; await salvarConteudo(limparC()); renderSite(); aviso('Textos salvos (' + onde() + ')');
+  };
+  $('#tx-reset').onclick = (e) => { const b = e.target; if (!b.dataset.c) { b.dataset.c = 1; b.textContent = 'Confirmar: voltar originais'; return; } C.textos = {...PADRAO.textos}; textos(); aviso('Textos originais carregados. Clique em Salvar para aplicar.'); };
+}
+
+function ajustes() {
+  body.innerHTML = card('Backup', `<p class="pn-sub">Copie todo o conteúdo do painel (textos, serviços, projetos e clientes) para guardar ou para publicar o site em outra hospedagem.</p><div class="ped-act"><button class="btn btn-main btn-sm" type="button" id="bk">Copiar backup (JSON)</button></div><textarea id="bk-t" rows="6" readonly hidden></textarea>`) +
+    card('Importar backup', `<p class="pn-sub">Cole um backup JSON para substituir textos, serviços, projetos e clientes.</p><textarea id="imp-t" rows="5" placeholder='{"conteudo":...}'></textarea><div class="ped-act" style="margin-top:12px"><button class="btn btn-ghost btn-sm" type="button" id="imp">Importar</button></div>`) + card('Sessão', `<p class="pn-sub">Você está conectado neste aparelho.</p><div class="ped-act"><button class="btn btn-ghost btn-sm" type="button" id="logout">Sair do painel</button></div>`);
+  $('#logout').onclick = () => { sair(); desenhar(); };
+  $('#imp').onclick = async (e) => { const b = e.target; let d; try { d = JSON.parse($('#imp-t').value); } catch { aviso('JSON inválido'); return; } if (!b.dataset.c) { b.dataset.c = 1; b.textContent = 'Confirmar: substituir tudo'; return; } try { await api('importar', d); S.adm = null; S.site = null; await recarregar(); aviso('Backup importado'); } catch (er) { aviso('Erro: ' + er.message); } };
+  $('#bk').onclick = async (e) => {
+    const data = JSON.stringify({conteudo:limparC(), projetos:D.projetos.map(limpo), clientes:D.clientes.map(limpo), exportado:new Date().toISOString()}, null, 2);
+    const ta = $('#bk-t'); ta.value = data; ta.hidden = false;
+    try { await navigator.clipboard.writeText(data); e.target.textContent = 'Copiado!'; } catch { ta.select(); e.target.textContent = 'Selecione e copie o texto abaixo'; }
+  };
+}
+
+function telaLogin() {
+  $('.pn-mode', pn).textContent = 'Entre com a sua senha para gerenciar o site.';
+  $('#pn-tabs').innerHTML = '';
+  body.innerHTML = `<form class="pn-card login" id="lg" novalidate><h2>Entrar no painel</h2><label class="fld"><span>Senha</span><input type="password" name="senha" autocomplete="current-password"></label><p class="f-err" hidden></p><button class="btn btn-main" type="submit">Entrar</button></form>`;
+  $('#lg input').focus();
+  $('#lg').onsubmit = async (e) => {
+    e.preventDefault(); const err = $('.f-err', e.target), b = $('button', e.target); b.disabled = true; b.textContent = 'Entrando…';
+    try {
+      const r = await fetch('/api/admin?acao=login', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senha:e.target.senha.value})});
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(j.erro || 'Senha incorreta');
+      S.token = j.token; S.owner = true; try { localStorage.setItem('ntlabs-token', j.token); } catch {}
+      await recarregar();
+    } catch (er) { err.textContent = er.message; err.hidden = false; b.disabled = false; b.textContent = 'Entrar'; }
+  };
+}
+async function recarregar() {
+  if (!S.owner) { desenhar(); return; }
+  try { await carregarAdmin(); } catch (e) { desenhar(); if (e.message !== 'login') aviso('Não foi possível carregar: ' + e.message); return; }
+  C = juntar(S.adm.conteudo);
+  const [pd, vs, cl, pj] = await Promise.all([listar('pedidos'), listar('visitas'), listar('clientes'), listar('projetos')]);
+  D = {pedidos:pd.sort((a, b) => (b.t || 0) - (a.t || 0)), visitas:vs, clientes:cl, projetos:pj.length ? pj : PROJ_PADRAO.map(p => ({...p}))};
+  PROJ = D.projetos.slice().sort((a, b) => (a.ordem || 0) - (b.ordem || 0)); renderProjetos();
+  desenhar();
+}
+async function abrirPainel() {
+  main.hidden = true; pn.hidden = false; window.scrollTo(0, 0);
+  body.innerHTML = '<p class="pn-load">Carregando dados…</p>';
+  const timer = setTimeout(() => { const l = $('.pn-load', pn); if (l) l.textContent = 'Os dados estão demorando para chegar. Confira sua conexão.'; }, 10000);
+  await recarregar();
+  clearTimeout(timer);
+}
+function rota() { if (location.hash === '#painel') abrirPainel(); else if (!pn.hidden) { pn.hidden = true; main.hidden = false; $('#ed').hidden = true; } }
+addEventListener('hashchange', rota); rota();
+}
+</script>
+</body>
+</html>

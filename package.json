@@ -1,0 +1,9 @@
+{
+  "name": "ntlabs-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Site da NT Labs com painel de gestão (Vercel + Vercel Blob)",
+  "engines": { "node": ">=20" },
+  "dependencies": { "@vercel/blob": "^2.9.0" }
+}
