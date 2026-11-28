@@ -1,19 +1,37 @@
-name: Publicar no Firebase
+name: Publicar regras do Firestore
+# O site é publicado automaticamente pela Vercel (integração com o GitHub).
+# Este workflow publica só as regras de segurança do Firestore (firestore.rules).
 on:
   push:
     branches: [main]
+    paths: [firestore.rules, firestore.indexes.json, firebase.json, .firebaserc, .github/workflows/deploy.yml]
   workflow_dispatch:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      SA: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Verificar credenciais
+        id: cred
+        run: |
+          if [ -z "$SA" ]; then
+            echo "::warning::Secret FIREBASE_SERVICE_ACCOUNT não configurado; regras do Firestore não publicadas."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.cred.outputs.ok == 'true'
+        uses: actions/checkout@v4
+      - if: steps.cred.outputs.ok == 'true'
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Credenciais
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > "$RUNNER_TEMP/sa.json"
-      - name: Deploy (site + regras do Firestore)
+      - if: steps.cred.outputs.ok == 'true'
+        name: Credenciais
+        run: printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+      - if: steps.cred.outputs.ok == 'true'
+        name: Deploy das regras do Firestore
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/sa.json
-        run: npx --yes firebase-tools@13 deploy --only hosting,firestore:rules --non-interactive
+        run: npx --yes firebase-tools@13 deploy --only firestore:rules --non-interactive
