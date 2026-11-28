@@ -373,7 +373,6 @@ footer{padding:40px max(5vw,18px) 90px;border-top:1px solid var(--line)}
 </div></footer>
 </div>
 <script>window.NT_MODEL={id:'B v2',nome:'Estúdio Circuito'};</script>
-<script src="/firebase-config.js"></script>
 <script>{
 /* ===== NT Labs — site + painel de gestão (v3) ===== */
 const M = window.NT_MODEL || {id:'B v3', nome:'Estúdio Circuito'};
@@ -459,31 +458,17 @@ const CLI_INICIAIS = [
   {id:'c2', nome:'Meire', negocio:'Elegância Íntima', whats:'', sistema:'Catálogo + WhatsApp com estoque, ou e-commerce com Mercado Pago', status:'Proposta', obs:'Proposta com duas formas de contratação: pagamento único ou plano mensal com tudo incluso.', t:Date.now()}
 ];
 
-/* ---------- dados: Firebase (Firestore + Auth com Google) ---------- */
-const FB_V = '10.12.2';
-const ADMIN_EMAIL = String(window.NT_ADMIN_EMAIL || '').toLowerCase();
-const S = {db:true, owner:false, assets:null, site:null, adm:null, user:null};
+/* ---------- dados: API na Vercel (/api/dados) ---------- */
+const S = {db:true, owner:false, assets:null, site:null, adm:null};
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const limpo = (o) => { const c = {...o}; delete c.src; delete c.id; Object.keys(c).forEach(k => c[k] === undefined && delete c[k]); return c; };
-let F = null, authPronto;
-const fbReady = (async () => {
-  if (!window.NT_FIREBASE || !window.NT_FIREBASE.projectId || window.NT_FIREBASE.projectId === 'COLE_AQUI') throw new Error('Firebase não configurado');
-  const [app, fs, au] = await Promise.all([
-    import(`https://www.gstatic.com/firebasejs/${FB_V}/firebase-app.js`),
-    import(`https://www.gstatic.com/firebasejs/${FB_V}/firebase-firestore.js`),
-    import(`https://www.gstatic.com/firebasejs/${FB_V}/firebase-auth.js`)
-  ]);
-  const ap = app.initializeApp(window.NT_FIREBASE);
-  F = {...fs, ...au, db: fs.getFirestore(ap), auth: au.getAuth(ap)};
-  authPronto = new Promise(res => F.onAuthStateChanged(F.auth, u => {
-    S.user = u; S.owner = !!(u && u.email && u.email.toLowerCase() === ADMIN_EMAIL && u.emailVerified);
-    S.assets = S.owner ? uploader : null; res();
-  }));
-  await authPronto;
-  return F;
-})();
-fbReady.catch(e => console.warn('[NT Labs]', e.message));
-const boot = fbReady.catch(() => null);
+async function req(a, dados, q = '') {
+  const r = await fetch('/api/dados?a=' + a + q, dados === undefined ? {credentials:'same-origin'} : {method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body:JSON.stringify(dados)});
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) { if (r.status === 401) { S.owner = false; S.assets = null; } throw new Error(r.status === 401 ? 'login' : (j.erro || 'Erro ' + r.status)); }
+  return j;
+}
+const boot = req('eu').then(r => { S.owner = !!r.owner; S.assets = S.owner ? uploader : null; }).catch(e => console.warn('[NT Labs]', e.message));
 async function compactar(file, max = 1400, q = .82) {
   const bmp = await createImageBitmap(file); const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
   const cv = document.createElement('canvas'); cv.width = Math.round(bmp.width * k); cv.height = Math.round(bmp.height * k);
@@ -493,77 +478,44 @@ async function compactar(file, max = 1400, q = .82) {
 const uploader = {upload: async (f) => {
   let data = await compactar(f); if (data.length > 900000) data = await compactar(f, 1000, .7);
   if (data.length > 1000000) throw new Error('Imagem grande demais');
-  const r = await F.addDoc(F.collection(F.db, 'imgs'), {data, t:Date.now()}); return {id:r.id};
+  return req('img', {data});
 }};
-/* imagens guardadas no Firestore: <img data-img="id"> recebe o conteúdo quando aparece */
-const IMG = {};
-async function hidratar(el) {
-  const id = el.dataset.img; if (!/^[\w-]{6,40}$/.test(id)) return;
-  try {
-    if (!IMG[id]) IMG[id] = (async () => { await fbReady; const d = await F.getDoc(F.doc(F.db, 'imgs', id)); return d.exists() ? d.data().data : ''; })();
-    const src = await IMG[id]; if (src && /^data:image\//.test(src)) el.src = src;
-  } catch {}
-}
+/* imagens guardadas no banco: <img data-img="id"> recebe o endereço quando aparece */
+function hidratar(el) { const id = el.dataset.img; if (/^[\w-]{6,40}$/.test(id)) el.src = '/api/dados?a=img&id=' + encodeURIComponent(id); }
 new MutationObserver(() => $$('img[data-img]:not([data-ok])').forEach(el => { el.dataset.ok = 1; hidratar(el); })).observe(document.body, {childList:true, subtree:true});
 async function carregarAdmin() {
-  await fbReady;
-  const q = (c, ...x) => F.getDocs(F.query(F.collection(F.db, c), ...x));
-  /* primeira vez: grava os projetos e clientes iniciais */
-  const cfg = await F.getDoc(F.doc(F.db, 'site', 'config'));
-  if (!cfg.exists() || !cfg.data().iniciado) {
-    for (const p of PROJ_PADRAO) await F.setDoc(F.doc(F.db, 'projetos', p.id), limpo(p));
-    for (const c of CLI_INICIAIS) await F.setDoc(F.doc(F.db, 'clientes', c.id), limpo(c));
-    await F.setDoc(F.doc(F.db, 'site', 'config'), {iniciado:true, t:Date.now()});
-  }
   const dias = [...Array(7)].map((_, i) => { const d = new Date(); d.setDate(d.getDate() - 6 + i); return hoje(d); });
-  const cont = async (...x) => (await F.getCountFromServer(F.query(F.collection(F.db, 'visitas'), ...x))).data().count;
-  const [pd, cl, pj, ct, total, ...porDia] = await Promise.all([
-    q('pedidos', F.orderBy('t', 'desc'), F.limit(300)), q('clientes'), q('projetos'),
-    F.getDoc(F.doc(F.db, 'site', 'conteudo')), cont(), ...dias.map(d => cont(F.where('dia', '==', d)))
-  ]);
-  const vis = []; dias.forEach((d, i) => { for (let k = 0; k < porDia[i]; k++) vis.push({dia:d}); });
-  for (let k = vis.length; k < total; k++) vis.push({dia:'antes'});
-  const m = (s) => s.docs.map(d => ({...d.data(), id:d.id}));
-  S.adm = {pedidos:m(pd), clientes:m(cl), projetos:m(pj), visitas:vis, conteudo:ct.exists() ? ct.data() : null};
+  let r = await req('admin', undefined, '&dias=' + dias.join(','));
+  /* primeira vez: grava os projetos e clientes iniciais */
+  if (!r.iniciado) { await req('iniciar', {projetos:PROJ_PADRAO.map(p => ({...limpo(p), id:p.id})), clientes:CLI_INICIAIS}); r = await req('admin', undefined, '&dias=' + dias.join(',')); }
+  const vis = []; dias.forEach(d => { for (let k = 0; k < (r.visitas.dias[d] || 0); k++) vis.push({dia:d}); });
+  for (let k = vis.length; k < r.visitas.total; k++) vis.push({dia:'antes'});
+  S.adm = {pedidos:r.pedidos, clientes:r.clientes, projetos:r.projetos, visitas:vis, conteudo:r.conteudo};
   return S.adm;
 }
 async function listar(col) { if (!S.adm) await carregarAdmin(); return (S.adm[col] || []).map(x => ({...x, src:'db'})); }
 async function gravar(col, it) {
-  await fbReady;
-  if (col === 'pedidos' && it.src === 'novo') { await F.addDoc(F.collection(F.db, 'pedidos'), limpo(it)); return it; }
-  if (col === 'visitas') { F.addDoc(F.collection(F.db, 'visitas'), {dia:it.dia, cel:!!it.cel, origem:it.origem === 'link' ? 'link' : 'direto', t:Date.now()}).catch(() => {}); return it; }
-  if (col === 'pedidos') { await F.updateDoc(F.doc(F.db, 'pedidos', it.id), {status:it.status}); return it; }
-  const data = limpo(it);
-  if (it.src === 'novo' || !it.id) { const r = await F.addDoc(F.collection(F.db, col), data); it.id = r.id; }
-  else await F.setDoc(F.doc(F.db, col, it.id), data);
-  it.src = 'db'; S.adm = null; return it;
+  if (col === 'pedidos' && it.src === 'novo') { await req('pedido', {item:limpo(it)}); return it; }
+  if (col === 'visitas') { req('visita', {dia:it.dia}).catch(() => {}); return it; }
+  const r = await req('salvar', {col, item:col === 'pedidos' ? {id:it.id, status:it.status} : {...limpo(it), id:it.id, src:it.src}});
+  it.id = r.id; it.src = 'db'; S.adm = null; return it;
 }
-async function apagar(col, it) { await fbReady; await F.deleteDoc(F.doc(F.db, col, it.id)); S.adm = null; }
+async function apagar(col, it) { await req('apagar', {col, id:it.id}); S.adm = null; }
 async function lerSite() {
-  if (!S.site) {
-    try {
-      await fbReady;
-      const [c, p] = await Promise.all([F.getDoc(F.doc(F.db, 'site', 'conteudo')), F.getDocs(F.collection(F.db, 'projetos'))]);
-      S.site = {conteudo:c.exists() ? c.data() : null, projetos:p.docs.map(d => ({...d.data(), id:d.id}))};
-    } catch { S.site = {}; }
-  }
+  if (!S.site) { try { S.site = await req('site'); } catch { S.site = {}; } }
   return S.site;
 }
 async function lerConteudo() { if (S.owner && S.adm) return S.adm.conteudo; return (await lerSite()).conteudo || null; }
-async function salvarConteudo(c) { await fbReady; await F.setDoc(F.doc(F.db, 'site', 'conteudo'), c); S.site = null; return 'db'; }
-function sair() { if (F) F.signOut(F.auth); S.owner = false; S.assets = null; S.adm = null; }
+async function salvarConteudo(c) { await req('conteudo', {conteudo:c}); S.site = null; return 'db'; }
+async function sair() { try { await req('logout', {}); } catch {} S.owner = false; S.assets = null; S.adm = null; }
 const juntar = (c) => ({textos:{...PADRAO.textos, ...(c?.textos || {})}, servicos:c?.servicos || PADRAO.servicos, passos:c?.passos || PADRAO.passos, difs:c?.difs || PADRAO.difs});
 async function projetosSite() {
   const l = (await lerSite()).projetos;
   return (l && l.length ? l : PROJ_PADRAO).slice().sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
 }
 async function api(acao, d) { /* usado pela importação de backup */
-  await fbReady;
   if (acao !== 'importar') throw new Error('ação');
-  if (d.conteudo) await F.setDoc(F.doc(F.db, 'site', 'conteudo'), d.conteudo);
-  for (const p of d.projetos || []) await F.setDoc(F.doc(F.db, 'projetos', p.id || uid()), limpo(p));
-  for (const c of d.clientes || []) await F.setDoc(F.doc(F.db, 'clientes', c.id || uid()), limpo(c));
-  return {ok:true};
+  return req('importar', {dados:d});
 }
 
 /* ---------- render do site ---------- */
@@ -688,6 +640,7 @@ $('#f-novo').addEventListener('click', () => { form.reset(); ok.hidden = true; f
 
 /* visita: uma por sessão */
 const hoje = (d = new Date()) => d.toLocaleDateString('sv-SE');
+const LK = 'nt_';
 (async () => {
   if (location.hash === '#painel') return;
   try { if (sessionStorage.getItem(LK + 'v')) return; sessionStorage.setItem(LK + 'v', '1'); } catch {}
@@ -924,8 +877,8 @@ function textos() {
 
 function ajustes() {
   body.innerHTML = card('Backup', `<p class="pn-sub">Copie todo o conteúdo do painel (textos, serviços, projetos e clientes) para guardar ou para publicar o site em outra hospedagem.</p><div class="ped-act"><button class="btn btn-main btn-sm" type="button" id="bk">Copiar backup (JSON)</button></div><textarea id="bk-t" rows="6" readonly hidden></textarea>`) +
-    card('Importar backup', `<p class="pn-sub">Cole um backup JSON para substituir textos, serviços, projetos e clientes.</p><textarea id="imp-t" rows="5" placeholder='{"conteudo":...}'></textarea><div class="ped-act" style="margin-top:12px"><button class="btn btn-ghost btn-sm" type="button" id="imp">Importar</button></div>`) + card('Sessão', `<p class="pn-sub">Conectado como ${esc(S.user?.email || "")}.</p><div class="ped-act"><button class="btn btn-ghost btn-sm" type="button" id="logout">Sair do painel</button></div>`);
-  $('#logout').onclick = () => { sair(); desenhar(); };
+    card('Importar backup', `<p class="pn-sub">Cole um backup JSON para substituir textos, serviços, projetos e clientes.</p><textarea id="imp-t" rows="5" placeholder='{"conteudo":...}'></textarea><div class="ped-act" style="margin-top:12px"><button class="btn btn-ghost btn-sm" type="button" id="imp">Importar</button></div>`) + card('Sessão', `<p class="pn-sub">Você está conectado ao painel neste navegador.</p><div class="ped-act"><button class="btn btn-ghost btn-sm" type="button" id="logout">Sair do painel</button></div>`);
+  $('#logout').onclick = async () => { await sair(); desenhar(); };
   $('#imp').onclick = async (e) => { const b = e.target; let d; try { d = JSON.parse($('#imp-t').value); } catch { aviso('JSON inválido'); return; } if (!b.dataset.c) { b.dataset.c = 1; b.textContent = 'Confirmar: substituir tudo'; return; } try { await api('importar', d); S.adm = null; S.site = null; await recarregar(); aviso('Backup importado'); } catch (er) { aviso('Erro: ' + er.message); } };
   $('#bk').onclick = async (e) => {
     const data = JSON.stringify({conteudo:limparC(), projetos:D.projetos.map(limpo), clientes:D.clientes.map(limpo), exportado:new Date().toISOString()}, null, 2);
@@ -935,18 +888,19 @@ function ajustes() {
 }
 
 function telaLogin() {
-  $('.pn-mode', pn).textContent = 'Entre com a sua conta Google para gerenciar o site.';
+  $('.pn-mode', pn).textContent = 'Entre com a senha do painel para gerenciar o site.';
   $('#pn-tabs').innerHTML = '';
-  body.innerHTML = `<div class="pn-card login"><h2>Entrar no painel</h2><p class="pn-sub">Só a conta autorizada consegue entrar.</p><p class="f-err" hidden></p><button class="btn btn-main" type="button" id="lg">Entrar com Google</button></div>`;
-  $('#lg').onclick = async (e) => {
-    const err = $('.f-err', body), b = e.target; b.disabled = true; b.textContent = 'Abrindo o Google…';
+  body.innerHTML = `<form class="pn-card login" id="lg-f" novalidate><h2>Entrar no painel</h2><p class="pn-sub">Só quem tem a senha consegue entrar.</p><label class="fld"><span>Senha</span><input name="senha" type="password" autocomplete="current-password" required></label><p class="f-err" hidden></p><button class="btn btn-main" type="submit">Entrar</button></form>`;
+  $('#lg-f input').focus();
+  $('#lg-f').onsubmit = async (e) => {
+    e.preventDefault();
+    const f = e.target, err = $('.f-err', f), b = $('button', f), senha = f.elements.senha.value;
+    if (!senha) { err.textContent = 'Digite a senha.'; err.hidden = false; return; }
+    b.disabled = true; b.textContent = 'Entrando…';
     try {
-      await fbReady;
-      const r = await F.signInWithPopup(F.auth, new F.GoogleAuthProvider());
-      const em = (r.user.email || '').toLowerCase();
-      if (em !== ADMIN_EMAIL) { await F.signOut(F.auth); throw new Error('A conta ' + em + ' não tem acesso ao painel.'); }
+      await req('login', {senha});
       S.owner = true; S.assets = uploader; await recarregar();
-    } catch (er) { err.textContent = er.code === 'auth/popup-closed-by-user' ? 'Login cancelado.' : (er.message || 'Não foi possível entrar.'); err.hidden = false; b.disabled = false; b.textContent = 'Entrar com Google'; }
+    } catch (er) { err.textContent = er.message || 'Não foi possível entrar.'; err.hidden = false; b.disabled = false; b.textContent = 'Entrar'; }
   };
 }
 async function recarregar() {
